@@ -124,14 +124,14 @@ their use is mandatory.
 The following technology decisions are locked for this project stage and MUST NOT
 be changed without a constitution amendment:
 
-| Layer | Technology | Version |
-|-------|-----------|---------|
-| Framework | Nuxt | 3.x |
-| UI Library | Vue | 3.x |
-| Language | TypeScript | 5.x (strict) |
-| Styling | Tailwind CSS | 4.x |
-| Linter / Formatter | Biome | 2.x |
-| Deployment | Vercel | latest |
+| Layer              | Technology   | Version      |
+| ------------------ | ------------ | ------------ |
+| Framework          | Nuxt         | 4.x          |
+| UI Library         | Vue          | 3.x          |
+| Language           | TypeScript   | 5.x (strict) |
+| Styling            | Tailwind CSS | 4.x          |
+| Linter / Formatter | Biome        | 2.x          |
+| Deployment         | Vercel       | latest       |
 
 New runtime dependencies MUST be evaluated against bundle size impact and
 maintenance status before being added to `package.json`.
@@ -155,12 +155,14 @@ This constitution supersedes all other implicit practices or conventions. When i
 conflict, the constitution wins.
 
 **Amendment procedure**:
+
 1. Open a PR with the proposed change to `.specify/memory/constitution.md`.
 2. State the version bump type (MAJOR / MINOR / PATCH) and rationale in the PR.
 3. All affected templates in `.specify/templates/` MUST be updated in the same PR.
 4. At least one reviewer MUST approve before merge.
 
 **Versioning policy**:
+
 - MAJOR: Principle removal, redefinition, or backward-incompatible governance change.
 - MINOR: New principle or section added; material expansion of existing guidance.
 - PATCH: Clarification, wording improvement, or typo fix.
