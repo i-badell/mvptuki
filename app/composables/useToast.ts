@@ -8,9 +8,10 @@ interface Toast {
   variant: ToastVariant
 }
 
-const toasts = useState<Toast[]>('toasts', () => [])
 
 export function useToast() {
+  
+const toasts = useState<Toast[]>('toasts', () => [])
   function show(message: string, variant: ToastVariant = 'info', duration = 4000) {
     const id = crypto.randomUUID()
     toasts.value.push({ id, message, variant })

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-impoort
 definePageMeta({ layout: 'auth' })
 </script>
 

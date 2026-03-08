@@ -5,6 +5,8 @@ export default defineNuxtConfig({
 
   modules: ['@nuxtjs/supabase', '@nuxt/image', '@nuxt/fonts'],
 
+  components: [{ path: '~/components', pathPrefix: false }],
+
   supabase: {
     redirectOptions: {
       login: '/login',
