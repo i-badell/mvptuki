@@ -7,37 +7,47 @@ const expanded = ref(false)
 <template>
   <div>
     <button
-      class="w-full relative h-28 rounded-card overflow-hidden bg-surface-muted border border-gray-200 cursor-pointer"
-      aria-label="View venue map"
+      class="w-full relative rounded-lg overflow-hidden cursor-pointer bg-gray-50 transition-all active:translate-x-[3px] active:translate-y-[3px]"
+      style="height: 185px; border: 1.5px solid #111111; box-shadow: var(--shadow-md);"
+      aria-label="Ver mapa del evento"
       @click="expanded = true"
     >
+      <!-- Grid texture -->
+      <div
+        class="absolute inset-0"
+        style="
+          background-image:
+            linear-gradient(rgba(0,0,0,0.06) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0,0,0,0.06) 1px, transparent 1px);
+          background-size: 26px 26px;
+        "
+      />
+
       <NuxtImg
         v-if="mapUrl"
         :src="mapUrl"
-        alt="Venue map"
-        class="w-full h-full object-cover opacity-90"
+        alt="Mapa del evento"
+        class="absolute inset-0 w-full h-full object-cover opacity-90"
         sizes="sm:100vw md:512px"
       />
-      <div v-else class="w-full h-full flex items-center justify-center text-text-muted gap-2">
-        <span>🗺️</span>
-        <span class="text-sm">Map coming soon</span>
-      </div>
-      <div class="absolute inset-0 flex items-center justify-center bg-black/10 hover:bg-black/20 transition-colors">
-        <span class="text-white text-sm font-medium bg-black/40 px-3 py-1 rounded-full">
-          View map
-        </span>
+
+      <!-- Entry label -->
+      <div
+        class="absolute bottom-3 right-3 bg-black text-white rounded-[5px] px-3 py-1 font-bold uppercase tracking-[0.8px]"
+        style="font-size: 10px;"
+      >
+        📍 Entrada principal
       </div>
     </button>
 
-    <!-- Fullscreen overlay -->
-    <AppModal v-model:open="expanded" title="Venue Map">
+    <AppModal v-model:open="expanded" title="Mapa del evento">
       <NuxtImg
         v-if="mapUrl"
         :src="mapUrl"
-        alt="Venue map"
+        alt="Mapa del evento"
         class="w-full rounded-lg"
       />
-      <p v-else class="text-text-muted text-center py-8">Map not available</p>
+      <p v-else class="text-gray-500 text-center py-8">Mapa no disponible</p>
     </AppModal>
   </div>
 </template>

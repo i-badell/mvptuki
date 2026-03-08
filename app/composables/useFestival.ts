@@ -13,7 +13,7 @@ export function useFestival() {
     error.value = null;
 
     try {
-      // Fetch active festival
+      // TODO: Festival id from config.
       const { data: festivalData, error: festErr } = await supabase
         .from("festivals")
         .select("*")
@@ -24,7 +24,7 @@ export function useFestival() {
 
       if (festErr) throw festErr;
       if (!festivalData) {
-        error.value = 'No active festival found';
+        error.value = "No active festival found";
         return;
       }
       festival.value = festivalData;

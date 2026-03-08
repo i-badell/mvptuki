@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Tuki – Food Trucks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red:        #d42b2b;
+  --red-dark:   #aa1f1f;
+  --red-light:  #fee2e2;
+  --black:      #111111;
+  --white:      #ffffff;
+  --bg:         #f8f8f5;
+  --gray-100:   #f0f0eb;
+  --gray-200:   #e4e4dc;
+  --gray-400:   #a8a89a;
+  --gray-500:   #888878;
+  --nav-h:      68px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--white); color: var(--black);
+  font-family: 'DM Sans', sans-serif;
+  max-width: 390px; margin: 0 auto;
+  min-height: 100vh; overflow-x: hidden;
+  padding-bottom: calc(var(--nav-h) + 16px);
+}
+body::after {
+  content: ''; position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 9999; opacity: 0.4;
+}
+@keyframes fade-up {
+  from { opacity:0; transform:translateY(12px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+@keyframes pop-in {
+  from { opacity:0; transform:scale(0.85); }
+  to   { opacity:1; transform:scale(1); }
+}
+
+/* ── HEADER ── */
+.header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(255,255,255,0.96); backdrop-filter: blur(8px);
+  border-bottom: 2px solid var(--black);
+  padding: 12px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px; letter-spacing: 5px; color: var(--black); line-height: 1;
+}
+.logo span { color: var(--red); }
+.header-right { display: flex; align-items: center; gap: 10px; }
+.profile-btn {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: var(--gray-100); border: 1.5px solid var(--black);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 16px;
+  transition: transform 0.14s;
+}
+.profile-btn:active { transform: scale(0.91); }
+.cart-btn {
+  position: relative; background: var(--red); border: none;
+  border-radius: 50%; width: 44px; height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: transform 0.15s, background 0.15s;
+}
+.cart-btn:active { transform: scale(0.91); background: var(--red-dark); }
+.cart-btn svg { width: 20px; height: 20px; fill: white; }
+.cart-badge {
+  position: absolute; top: -5px; right: -5px;
+  background: var(--black); color: white; font-size: 10px; font-weight: 700;
+  border-radius: 50%; width: 19px; height: 19px;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ── PAGE TITLE ── */
+.page-title {
+  padding: 18px 20px 0;
+  animation: fade-up 0.4s ease both;
+}
+.page-eyebrow {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 2px; color: var(--red); margin-bottom: 4px;
+}
+.page-heading {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 38px; letter-spacing: 2px; line-height: 0.9; color: var(--black);
+}
+.page-heading em {
+  font-family: 'Playfair Display', serif;
+  font-style: italic; font-size: 28px; color: var(--red);
+}
+.page-sub { font-size: 12px; color: var(--gray-500); margin-top: 6px; }
+
+/* ── TAB SWITCHER ── */
+.tab-bar {
+  display: flex; margin: 16px 20px 0;
+  background: var(--gray-100);
+  border: 1.5px solid var(--black); border-radius: 12px; padding: 4px;
+  box-shadow: 3px 3px 0 var(--black);
+  animation: fade-up 0.4s 0.05s ease both;
+}
+.tab-btn {
+  flex: 1; text-align: center; padding: 9px 8px;
+  border-radius: 8px; font-size: 12px; font-weight: 700;
+  color: var(--gray-500); cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  user-select: none;
+}
+.tab-btn.active {
+  background: var(--black); color: white;
+  box-shadow: 2px 2px 0 var(--red-dark);
+}
+.tab-btn svg { width: 14px; height: 14px; }
+
+/* ── SEARCH / FILTER ── */
+.search-row {
+  display: flex; gap: 8px; padding: 14px 20px 10px;
+  animation: fade-up 0.4s 0.1s ease both;
+}
+.search-input-wrap {
+  flex: 1; position: relative;
+}
+.search-icon {
+  position: absolute; left: 11px; top: 50%; transform: translateY(-50%);
+  width: 14px; height: 14px; color: var(--gray-400);
+}
+.search-input {
+  width: 100%; background: var(--gray-100);
+  border: 1.5px solid var(--gray-200); border-radius: 10px;
+  padding: 9px 12px 9px 32px; font-size: 13px;
+  font-family: 'DM Sans', sans-serif; color: var(--black);
+  outline: none; transition: border-color 0.15s;
+}
+.search-input:focus { border-color: var(--black); }
+.search-input::placeholder { color: var(--gray-400); }
+.filter-btn {
+  width: 38px; height: 38px; border-radius: 10px;
+  background: white; border: 1.5px solid var(--black);
+  box-shadow: 2px 2px 0 var(--black);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0;
+}
+.filter-btn svg { width: 15px; height: 15px; }
+
+/* ── CATEGORY PILLS ── */
+.pills {
+  display: flex; gap: 7px; padding: 0 20px 14px;
+  overflow-x: auto; scrollbar-width: none;
+}
+.pills::-webkit-scrollbar { display: none; }
+.pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 6px 13px; border-radius: 9999px;
+  border: 1.5px solid var(--gray-200); background: white;
+  font-size: 11px; font-weight: 700; color: var(--gray-500);
+  white-space: nowrap; cursor: pointer;
+  box-shadow: 2px 2px 0 var(--gray-200);
+  transition: all 0.12s;
+}
+.pill.active {
+  background: var(--black); border-color: var(--black); color: white;
+  box-shadow: 2px 2px 0 var(--red-dark);
+}
+
+/* ── SCREENS ── */
+.screen { display: none; }
+.screen.active { display: block; animation: fade-up 0.3s ease both; }
+
+/* ══════════════════════════════
+   LIST VIEW
+══════════════════════════════ */
+.trucks-list { padding: 0 20px; display: flex; flex-direction: column; gap: 10px; }
+
+.truck-card {
+  background: white; border: 1.5px solid var(--black);
+  border-radius: 14px; box-shadow: 4px 4px 0 var(--black);
+  overflow: hidden; cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.truck-card:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--black); }
+
+.truck-header {
+  height: 72px; position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px;
+}
+.truck-header::before {
+  content: ''; position: absolute; inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.15) 1.5px, transparent 1.5px);
+  background-size: 14px 14px; pointer-events: none;
+}
+.truck-stripe {
+  position: absolute; top: -20px; right: -20px;
+  width: 120px; height: 120px;
+  background: rgba(255,255,255,0.07); transform: rotate(-20deg);
+  border-radius: 4px;
+}
+.truck-emoji-big {
+  font-size: 38px; position: relative; z-index: 1;
+  filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.2));
+}
+.truck-header-right { position: relative; z-index: 1; text-align: right; }
+.truck-wait {
+  font-size: 10px; font-weight: 700;
+  background: white; border-radius: 6px; padding: 3px 8px;
+  border: 1px solid rgba(0,0,0,0.15);
+  display: inline-block; margin-bottom: 4px;
+}
+.truck-location-badge {
+  font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.8);
+  display: block;
+}
+
+.truck-body { padding: 12px 16px 14px; }
+.truck-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 5px; }
+.truck-name {
+  font-family: 'Playfair Display', serif; font-weight: 700;
+  font-size: 16px; color: var(--black); line-height: 1.2;
+}
+.truck-rating {
+  font-size: 11px; font-weight: 700;
+  background: var(--gray-100); color: var(--black);
+  border: 1px solid var(--gray-200); border-radius: 6px;
+  padding: 3px 8px; white-space: nowrap; flex-shrink: 0;
+  margin-left: 8px;
+}
+.truck-desc { font-size: 12px; color: var(--gray-500); line-height: 1.5; margin-bottom: 10px; }
+.truck-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.truck-tag {
+  font-size: 10px; font-weight: 600; color: var(--black);
+  background: var(--gray-100); border: 1px solid var(--gray-200);
+  border-radius: 5px; padding: 2px 8px;
+}
+.truck-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 12px; padding-top: 10px;
+  border-top: 1px solid var(--gray-200);
+}
+.truck-price-range { font-size: 12px; color: var(--gray-500); font-weight: 600; }
+.truck-status {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 700;
+}
+.status-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+}
+.status-open .status-dot { background: #22c55e; }
+.status-open { color: #15803d; }
+.status-busy .status-dot { background: #f59e0b; animation: pulse-dot 1.5s ease-in-out infinite; }
+.status-busy { color: #d97706; }
+.status-closed .status-dot { background: var(--gray-400); }
+.status-closed { color: var(--gray-400); }
+@keyframes pulse-dot {
+  0%,100% { opacity:1; transform:scale(1); }
+  50% { opacity:0.4; transform:scale(0.7); }
+}
+.btn-pedir {
+  background: var(--red); color: white;
+  border: 1.5px solid var(--red-dark);
+  border-radius: 8px; padding: 7px 16px;
+  font-size: 12px; font-weight: 700;
+  box-shadow: 2px 2px 0 var(--red-dark);
+  cursor: pointer; transition: transform 0.1s, box-shadow 0.1s;
+}
+.btn-pedir:active { transform: translate(2px,2px); box-shadow: 0 0; }
+.btn-pedir.disabled {
+  background: var(--gray-200); color: var(--gray-500);
+  border-color: var(--gray-200); box-shadow: 2px 2px 0 var(--gray-200);
+  cursor: default;
+}
+
+/* ══════════════════════════════
+   MAP VIEW
+══════════════════════════════ */
+.map-container {
+  margin: 0 20px;
+  border: 2px solid var(--black);
+  border-radius: 16px;
+  box-shadow: 5px 5px 0 var(--black);
+  overflow: hidden;
+  background: #faf9f6;
+  position: relative;
+}
+
+/* SVG map */
+.map-svg-wrap {
+  width: 100%; position: relative;
+  overflow: hidden;
+}
+.map-svg {
+  width: 100%; height: auto; display: block;
+}
+
+/* Map legend */
+.map-legend {
+  padding: 12px 16px;
+  border-top: 1.5px solid var(--gray-200);
+  display: flex; gap: 14px; flex-wrap: wrap;
+}
+.legend-item {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 10px; font-weight: 600; color: var(--gray-500);
+}
+.legend-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  border: 1.5px solid var(--black);
+}
+
+/* MAP POPUP */
+.map-popup {
+  position: absolute; z-index: 50;
+  background: white; border: 2px solid var(--black);
+  border-radius: 12px; box-shadow: 4px 4px 0 var(--black);
+  padding: 12px 14px; width: 170px;
+  pointer-events: none;
+  opacity: 0; transform: scale(0.9) translateY(4px);
+  transition: opacity 0.15s, transform 0.15s;
+}
+.map-popup.visible {
+  opacity: 1; transform: scale(1) translateY(0);
+  pointer-events: auto;
+}
+.popup-name {
+  font-family: 'Playfair Display', serif; font-weight: 700;
+  font-size: 13px; margin-bottom: 2px;
+}
+.popup-meta { font-size: 10px; color: var(--gray-500); margin-bottom: 8px; }
+.popup-btn {
+  display: block; text-align: center;
+  background: var(--black); color: white;
+  border: none; border-radius: 7px; padding: 7px;
+  font-size: 11px; font-weight: 700; cursor: pointer;
+  box-shadow: 2px 2px 0 var(--red-dark);
+  width: 100%;
+}
+.popup-close {
+  position: absolute; top: 8px; right: 10px;
+  font-size: 14px; color: var(--gray-400);
+  cursor: pointer; background: none; border: none;
+  padding: 0; line-height: 1;
+}
+
+/* MAP SELECTED LIST */
+.map-truck-list {
+  padding: 14px 20px 0;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.map-truck-row {
+  background: white; border: 1.5px solid var(--black);
+  border-radius: 12px; box-shadow: 3px 3px 0 var(--black);
+  padding: 10px 14px;
+  display: flex; align-items: center; gap: 10px;
+  cursor: pointer; transition: transform 0.1s, box-shadow 0.1s;
+}
+.map-truck-row:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 var(--black); }
+.map-truck-row.highlighted {
+  border-color: var(--red); box-shadow: 3px 3px 0 var(--red-dark);
+  background: var(--red-light);
+}
+.map-pin-label {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 2px solid var(--black); box-shadow: 2px 2px 0 var(--black);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Bebas Neue', sans-serif; font-size: 13px;
+  flex-shrink: 0; color: white;
+}
+.map-row-info { flex: 1; }
+.map-row-name {
+  font-family: 'Playfair Display', serif; font-weight: 700;
+  font-size: 13px; margin-bottom: 1px;
+}
+.map-row-meta { font-size: 10px; color: var(--gray-500); }
+.map-row-wait {
+  font-size: 10px; font-weight: 700;
+  color: var(--black);
+  white-space: nowrap;
+}
+
+/* BOTTOM NAV */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 390px; height: var(--nav-h);
+  background: rgba(255,255,255,0.97); backdrop-filter: blur(8px);
+  border-top: 2px solid var(--black);
+  display: flex; align-items: stretch; z-index: 100;
+}
+.nav-item {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 3px; padding: 10px 4px 12px; cursor: pointer;
+  background: none; border: none;
+}
+.nav-item:not(:last-child) { border-right: 1px solid var(--gray-200); }
+.nav-item.active { background: #fff0f0; }
+.nav-icon svg { width: 20px; height: 20px; fill: none; stroke: var(--gray-400); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.nav-item.active .nav-icon svg { stroke: var(--red); }
+.nav-label { font-size: 10px; font-weight: 600; color: var(--gray-400); }
+.nav-item.active .nav-label { color: var(--red); }
+
+/* Carrito FAB central */
+.nav-item.nav-cart {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-end;
+  padding-bottom: 10px; position: relative;
+  border-right: 1px solid var(--gray-200);
+  cursor: pointer; background: none; border-top: none;
+}
+.nav-cart-fab {
+  width: 50px; height: 50px; background: var(--red); border-radius: 50%;
+  border: 2px solid var(--black); box-shadow: 3px 3px 0 var(--red-dark);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 3px; margin-top: -20px; flex-shrink: 0;
+}
+.nav-cart-fab svg { width: 20px; height: 20px; fill: none; stroke: white; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.nav-cart-badge {
+  position: absolute; top: 2px; right: calc(50% - 30px);
+  background: var(--black); color: white; font-size: 9px; font-weight: 700;
+  border-radius: 50%; width: 17px; height: 17px;
+  display: flex; align-items: center; justify-content: center;
+}
+.nav-item.nav-cart .nav-label { color: var(--gray-400); font-size: 10px; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <span class="logo">TU<span>K</span>I</span>
+  <div class="header-right">
+    <button class="profile-btn">👤</button>
+    <button class="cart-btn">
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="21" r="1" fill="white" stroke="none"/><circle cx="20" cy="21" r="1" fill="white" stroke="none"/><path d="M1 1h4l2.68 13.39a2 2 0 001.99 1.61h9.72a2 2 0 001.98-1.61L23 6H6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span class="cart-badge">2</span>
+    </button>
+  </div>
+</header>
+
+<div class="page-title">
+  <div class="page-eyebrow">Garage Gourmet · 2025</div>
+  <h1 class="page-heading">FOOD<br><em>Trucks</em></h1>
+  <p class="page-sub">8 puestos · Hoy 18–24h · Parque Rodó</p>
+</div>
+
+<!-- TAB BAR -->
+<div class="tab-bar">
+  <div class="tab-btn active" id="tab-list" onclick="switchTab('list')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1" fill="currentColor"/><circle cx="3" cy="12" r="1" fill="currentColor"/><circle cx="3" cy="18" r="1" fill="currentColor"/></svg>
+    Lista
+  </div>
+  <div class="tab-btn" id="tab-map" onclick="switchTab('map')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+    Mapa
+  </div>
+</div>
+
+<!-- SEARCH -->
+<div class="search-row">
+  <div class="search-input-wrap">
+    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input class="search-input" type="text" placeholder="Buscar un truck...">
+  </div>
+  <button class="filter-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+  </button>
+</div>
+
+<!-- PILLS -->
+<div class="pills">
+  <span class="pill active">🍽️ Todos</span>
+  <span class="pill">🍔 Burgers</span>
+  <span class="pill">🌮 Street</span>
+  <span class="pill">🍝 Pastas</span>
+  <span class="pill">🍣 Sushi</span>
+  <span class="pill">🌱 Vegano</span>
+  <span class="pill">🍺 Bebidas</span>
+</div>
+
+<!-- ══ LIST SCREEN ══ -->
+<div class="screen active" id="screen-list">
+  <div class="trucks-list">
+
+    <!-- Truck 1 -->
+    <div class="truck-card" style="animation: fade-up 0.4s 0.05s ease both;">
+      <div class="truck-header" style="background: var(--red);">
+        <div class="truck-stripe"></div>
+        <span class="truck-emoji-big">🍔</span>
+        <div class="truck-header-right">
+          <span class="truck-wait" style="color:var(--red);">~12 min</span>
+          <span class="truck-location-badge">📍 Zona A</span>
+        </div>
+      </div>
+      <div class="truck-body">
+        <div class="truck-top">
+          <div class="truck-name">Garage Burger</div>
+          <span class="truck-rating">★ 4.9</span>
+        </div>
+        <p class="truck-desc">Las mejores smash burgers del festival. Carne angus, cheddar artesanal y salsas propias.</p>
+        <div class="truck-tags">
+          <span class="truck-tag">🍔 Burgers</span>
+          <span class="truck-tag">🍟 Papas</span>
+          <span class="truck-tag">🥤 Shakes</span>
+        </div>
+        <div class="truck-footer">
+          <span class="truck-price-range">$280 – $580</span>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="truck-status status-busy">
+              <span class="status-dot"></span>Alta demanda
+            </div>
+            <button class="btn-pedir">Ver menú →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Truck 2 -->
+    <div class="truck-card" style="animation: fade-up 0.4s 0.1s ease both;">
+      <div class="truck-header" style="background: #1e3a5f;">
+        <div class="truck-stripe"></div>
+        <span class="truck-emoji-big">🌮</span>
+        <div class="truck-header-right">
+          <span class="truck-wait" style="color:#1e3a5f;">~6 min</span>
+          <span class="truck-location-badge">📍 Zona B</span>
+        </div>
+      </div>
+      <div class="truck-body">
+        <div class="truck-top">
+          <div class="truck-name">Taquería del Sur</div>
+          <span class="truck-rating">★ 4.8</span>
+        </div>
+        <p class="truck-desc">Tacos auténticos con tortilla de maíz, carne asada y guacamole fresco.</p>
+        <div class="truck-tags">
+          <span class="truck-tag">🌮 Tacos</span>
+          <span class="truck-tag">🥑 Vegano</span>
+          <span class="truck-tag">🌶️ Picante</span>
+        </div>
+        <div class="truck-footer">
+          <span class="truck-price-range">$180 – $420</span>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="truck-status status-open">
+              <span class="status-dot"></span>Abierto
+            </div>
+            <button class="btn-pedir">Ver menú →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Truck 3 -->
+    <div class="truck-card" style="animation: fade-up 0.4s 0.15s ease both;">
+      <div class="truck-header" style="background: #166534;">
+        <div class="truck-stripe"></div>
+        <span class="truck-emoji-big">🌱</span>
+        <div class="truck-header-right">
+          <span class="truck-wait" style="color:#166534;">~8 min</span>
+          <span class="truck-location-badge">📍 Zona A</span>
+        </div>
+      </div>
+      <div class="truck-body">
+        <div class="truck-top">
+          <div class="truck-name">Verde Vida</div>
+          <span class="truck-rating">★ 4.7</span>
+        </div>
+        <p class="truck-desc">Cocina plant-based sin sacrificar el sabor. Bowls, wraps y burgers veganas.</p>
+        <div class="truck-tags">
+          <span class="truck-tag">🌱 Vegano</span>
+          <span class="truck-tag">🥗 Bowls</span>
+          <span class="truck-tag">🌾 Sin gluten</span>
+        </div>
+        <div class="truck-footer">
+          <span class="truck-price-range">$220 – $480</span>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="truck-status status-open">
+              <span class="status-dot"></span>Abierto
+            </div>
+            <button class="btn-pedir">Ver menú →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Truck 4 -->
+    <div class="truck-card" style="animation: fade-up 0.4s 0.2s ease both;">
+      <div class="truck-header" style="background: #1e293b;">
+        <div class="truck-stripe"></div>
+        <span class="truck-emoji-big">🍣</span>
+        <div class="truck-header-right">
+          <span class="truck-wait" style="color:#1e293b;">~20 min</span>
+          <span class="truck-location-badge">📍 Zona C</span>
+        </div>
+      </div>
+      <div class="truck-body">
+        <div class="truck-top">
+          <div class="truck-name">Nori Street</div>
+          <span class="truck-rating">★ 4.6</span>
+        </div>
+        <p class="truck-desc">Rolls y nigiri preparados al momento. Ingredientes frescos, estilo japonés callejero.</p>
+        <div class="truck-tags">
+          <span class="truck-tag">🍣 Sushi</span>
+          <span class="truck-tag">🍱 Bento</span>
+        </div>
+        <div class="truck-footer">
+          <span class="truck-price-range">$320 – $680</span>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="truck-status status-busy">
+              <span class="status-dot"></span>Alta demanda
+            </div>
+            <button class="btn-pedir">Ver menú →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Truck 5 — CERRADO -->
+    <div class="truck-card" style="animation: fade-up 0.4s 0.25s ease both; opacity:0.6;">
+      <div class="truck-header" style="background: #888878;">
+        <div class="truck-stripe"></div>
+        <span class="truck-emoji-big" style="filter:grayscale(1);">🍺</span>
+        <div class="truck-header-right">
+          <span class="truck-wait" style="color:#888878;">Abre 20h</span>
+          <span class="truck-location-badge">📍 Zona B</span>
+        </div>
+      </div>
+      <div class="truck-body">
+        <div class="truck-top">
+          <div class="truck-name">La Cervecería</div>
+          <span class="truck-rating" style="opacity:0.5;">★ 4.8</span>
+        </div>
+        <p class="truck-desc">Cervezas artesanales de elaboración propia. IPA, stout, blonde y ediciones especiales.</p>
+        <div class="truck-tags">
+          <span class="truck-tag">🍺 Cervezas</span>
+          <span class="truck-tag">🥨 Snacks</span>
+        </div>
+        <div class="truck-footer">
+          <span class="truck-price-range">$150 – $320</span>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="truck-status status-closed">
+              <span class="status-dot"></span>Cerrado
+            </div>
+            <button class="btn-pedir disabled">No disponible</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ MAP SCREEN ══ -->
+<div class="screen" id="screen-map">
+
+  <div class="map-container">
+    <div class="map-svg-wrap" style="position:relative;">
+
+      <!-- MAP POPUP -->
+      <div class="map-popup" id="map-popup">
+        <button class="popup-close" onclick="closePopup()">✕</button>
+        <div class="popup-name" id="popup-name">—</div>
+        <div class="popup-meta" id="popup-meta">—</div>
+        <button class="popup-btn">Ver menú →</button>
+      </div>
+
+      <svg class="map-svg" viewBox="0 0 350 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Background -->
+        <rect width="350" height="420" fill="#faf9f6"/>
+
+        <!-- Grid lines -->
+        <line x1="0" y1="140" x2="350" y2="140" stroke="#e4e4dc" stroke-width="1"/>
+        <line x1="0" y1="280" x2="350" y2="280" stroke="#e4e4dc" stroke-width="1"/>
+        <line x1="116" y1="0" x2="116" y2="420" stroke="#e4e4dc" stroke-width="1"/>
+        <line x1="232" y1="0" x2="232" y2="420" stroke="#e4e4dc" stroke-width="1"/>
+
+        <!-- ZONA A label -->
+        <rect x="10" y="10" width="52" height="20" rx="4" fill="#111111"/>
+        <text x="36" y="24" text-anchor="middle" font-family="'Bebas Neue', Arial Black, sans-serif" font-size="11" letter-spacing="1" fill="white">ZONA A</text>
+
+        <!-- ZONA B label -->
+        <rect x="126" y="10" width="52" height="20" rx="4" fill="#111111"/>
+        <text x="152" y="24" text-anchor="middle" font-family="'Bebas Neue', Arial Black, sans-serif" font-size="11" letter-spacing="1" fill="white">ZONA B</text>
+
+        <!-- ZONA C label -->
+        <rect x="242" y="10" width="52" height="20" rx="4" fill="#111111"/>
+        <text x="268" y="24" text-anchor="middle" font-family="'Bebas Neue', Arial Black, sans-serif" font-size="11" letter-spacing="1" fill="white">ZONA C</text>
+
+        <!-- Stage / Escenario -->
+        <rect x="30" y="340" width="290" height="60" rx="8" fill="#111111"/>
+        <text x="175" y="364" text-anchor="middle" font-family="'Bebas Neue', Arial Black, sans-serif" font-size="13" letter-spacing="2" fill="white">ESCENARIO PRINCIPAL</text>
+        <text x="175" y="382" text-anchor="middle" font-family="'DM Sans', Arial, sans-serif" font-size="9" fill="rgba(255,255,255,0.5)">Acceso por Av. Principal</text>
+
+        <!-- Decorative halftone dots -->
+        <circle cx="175" cy="200" r="60" fill="none" stroke="#e4e4dc" stroke-width="0.5" stroke-dasharray="3 6"/>
+        <circle cx="175" cy="200" r="90" fill="none" stroke="#e4e4dc" stroke-width="0.5" stroke-dasharray="2 8"/>
+
+        <!-- Entrance -->
+        <rect x="148" y="305" width="54" height="24" rx="5" fill="#e4e4dc"/>
+        <text x="175" y="321" text-anchor="middle" font-family="'DM Sans', Arial, sans-serif" font-size="9" font-weight="700" fill="#888878">ENTRADA</text>
+        <line x1="175" y1="280" x2="175" y2="305" stroke="#e4e4dc" stroke-width="2" stroke-dasharray="4 4"/>
+
+        <!-- Paths -->
+        <path d="M58 140 Q58 200 58 280" stroke="#e8e8e0" stroke-width="12" stroke-linecap="round" fill="none"/>
+        <path d="M175 50 Q175 100 175 140" stroke="#e8e8e0" stroke-width="12" stroke-linecap="round" fill="none"/>
+        <path d="M290 140 Q290 200 290 260" stroke="#e8e8e0" stroke-width="12" stroke-linecap="round" fill="none"/>
+        <path d="M30 200 Q100 200 175 200 Q240 200 320 200" stroke="#e8e8e0" stroke-width="12" stroke-linecap="round" fill="none"/>
+
+        <!-- ── PINS ── -->
+
+        <!-- Pin 1 - Garage Burger (Zona A, top) -->
+        <g class="map-pin" id="pin-1" onclick="showPopup(1, 62, 85)" style="cursor:pointer;" transform="translate(62,85)">
+          <circle r="22" fill="var(--red)" stroke="#111" stroke-width="2"/>
+          <circle r="22" fill="var(--red)" stroke="#111" stroke-width="2" opacity="0.3">
+            <animate attributeName="r" from="22" to="32" dur="2s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" from="0.3" to="0" dur="2s" repeatCount="indefinite"/>
+          </circle>
+          <text text-anchor="middle" dy="5" font-family="'Bebas Neue', Arial Black, sans-serif" font-size="14" fill="white">1</text>
+          <text text-anchor="middle" dy="-30" font-family="'DM Sans', Arial, sans-serif" font-size="8" font-weight="700" fill="#111">🍔</text>
+        </g>
+
+        <!-- Pin 2 - Taquería (Zona B, top) -->
+        <g class="map-pin" id="pin-2" onclick="showPopup(2, 175, 85)" style="cursor:pointer;" transform="translate(175,85)">
+          <circle r="20" fill="#1e3a5f" stroke="#111" stroke-width="2"/>
+          <text text-anchor="middle" dy="5" font-family="'Bebas Neue', Arial Black, sans-serif" font-size="14" fill="white">2</text>
+          <text text-anchor="middle" dy="-28" font-family="'DM Sans', Arial, sans-serif" font-size="8" font-weight="700" fill="#111">🌮</text>
+        </g>
+
+        <!-- Pin 3 - Verde Vida (Zona A, bottom) -->
+        <g class="map-pin" id="pin-3" onclick="showPopup(3, 62, 230)" style="cursor:pointer;" transform="translate(62,230)">
+          <circle r="20" fill="#166534" stroke="#111" stroke-width="2"/>
+          <text text-anchor="middle" dy="5" font-family="'Bebas Neue', Arial Black, sans-serif" font-size="14" fill="white">3</text>
+          <text text-anchor="middle" dy="-28" font-family="'DM Sans', Arial, sans-serif" font-size="8" font-weight="700" fill="#111">🌱</text>
+        </g>
+
+        <!-- Pin 4 - Nori Street (Zona C, mid) -->
+        <g class="map-pin" id="pin-4" onclick="showPopup(4, 290, 170)" style="cursor:pointer;" transform="translate(290,170)">
+          <circle r="20" fill="#1e293b" stroke="#111" stroke-width="2"/>
+          <text text-anchor="middle" dy="5" font-family="'Bebas Neue', Arial Black, sans-serif" font-size="14" fill="white">4</text>
+          <text text-anchor="middle" dy="-28" font-family="'DM Sans', Arial, sans-serif" font-size="8" font-weight="700" fill="#111">🍣</text>
+        </g>
+
+        <!-- Pin 5 - Cervecería (Zona B, bottom) — closed / gray -->
+        <g class="map-pin" id="pin-5" onclick="showPopup(5, 175, 240)" style="cursor:pointer;opacity:0.5;" transform="translate(175,240)">
+          <circle r="20" fill="#888878" stroke="#111" stroke-width="2"/>
+          <text text-anchor="middle" dy="5" font-family="'Bebas Neue', Arial Black, sans-serif" font-size="14" fill="white">5</text>
+          <text text-anchor="middle" dy="-28" font-family="'DM Sans', Arial, sans-serif" font-size="8" font-weight="700" fill="#111">🍺</text>
+        </g>
+
+        <!-- Baños -->
+        <rect x="276" y="58" width="46" height="28" rx="5" fill="#e4e4dc" stroke="#ccc" stroke-width="1"/>
+        <text x="299" y="71" text-anchor="middle" font-family="'DM Sans', Arial, sans-serif" font-size="8" font-weight="700" fill="#888">🚻 Baños</text>
+        <text x="299" y="81" text-anchor="middle" font-family="'DM Sans', Arial, sans-serif" font-size="7" fill="#aaa">Zona C</text>
+
+        <!-- Info point -->
+        <circle cx="175" cy="200" r="12" fill="white" stroke="#111" stroke-width="1.5"/>
+        <text x="175" y="204" text-anchor="middle" font-family="'Bebas Neue', Arial Black, sans-serif" font-size="11" fill="#111">ℹ</text>
+
+      </svg>
+    </div>
+
+    <div class="map-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--red);"></div>Alta demanda</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#22c55e;"></div>Abierto</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#888878;"></div>Cerrado</div>
+    </div>
+  </div>
+
+  <!-- MAP TRUCK LIST -->
+  <div class="map-truck-list">
+    <div class="map-truck-row" id="row-1" onclick="highlightRow(1); showPopup(1,62,85)">
+      <div class="map-pin-label" style="background:var(--red);box-shadow:2px 2px 0 var(--red-dark);">1</div>
+      <div class="map-row-info">
+        <div class="map-row-name">Garage Burger</div>
+        <div class="map-row-meta">Zona A · 🍔 Burgers</div>
+      </div>
+      <span class="map-row-wait">~12 min</span>
+    </div>
+    <div class="map-truck-row" id="row-2" onclick="highlightRow(2); showPopup(2,175,85)">
+      <div class="map-pin-label" style="background:#1e3a5f;box-shadow:2px 2px 0 #0f1f33;">2</div>
+      <div class="map-row-info">
+        <div class="map-row-name">Taquería del Sur</div>
+        <div class="map-row-meta">Zona B · 🌮 Street food</div>
+      </div>
+      <span class="map-row-wait">~6 min</span>
+    </div>
+    <div class="map-truck-row" id="row-3" onclick="highlightRow(3); showPopup(3,62,230)">
+      <div class="map-pin-label" style="background:#166534;box-shadow:2px 2px 0 #14532d;">3</div>
+      <div class="map-row-info">
+        <div class="map-row-name">Verde Vida</div>
+        <div class="map-row-meta">Zona A · 🌱 Vegano</div>
+      </div>
+      <span class="map-row-wait">~8 min</span>
+    </div>
+    <div class="map-truck-row" id="row-4" onclick="highlightRow(4); showPopup(4,290,170)">
+      <div class="map-pin-label" style="background:#1e293b;box-shadow:2px 2px 0 #0f1829;">4</div>
+      <div class="map-row-info">
+        <div class="map-row-name">Nori Street</div>
+        <div class="map-row-meta">Zona C · 🍣 Sushi</div>
+      </div>
+      <span class="map-row-wait">~20 min</span>
+    </div>
+    <div class="map-truck-row" id="row-5" onclick="highlightRow(5)" style="opacity:0.5;">
+      <div class="map-pin-label" style="background:#888878;box-shadow:2px 2px 0 #666;">5</div>
+      <div class="map-row-info">
+        <div class="map-row-name">La Cervecería</div>
+        <div class="map-row-meta">Zona B · 🍺 Bebidas</div>
+      </div>
+      <span class="map-row-wait" style="color:var(--gray-500);">Abre 20h</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-item" onclick="setNav(this)">
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H5a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg></div>
+    <span class="nav-label">Inicio</span>
+  </button>
+  <button class="nav-item" onclick="setNav(this)">
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg></div>
+    <span class="nav-label">Pedidos</span>
+  </button>
+  <button class="nav-item nav-cart" onclick="setNav(this)">
+    <span class="nav-cart-badge">2</span>
+    <div class="nav-cart-fab"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="21" r="1" fill="white" stroke="none"/><circle cx="20" cy="21" r="1" fill="white" stroke="none"/><path d="M1 1h4l2.68 13.39a2 2 0 001.99 1.61h9.72a2 2 0 001.98-1.61L23 6H6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <span class="nav-label">Carrito</span>
+  </button>
+  <button class="nav-item active" onclick="setNav(this)">
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+    <span class="nav-label">Trucks</span>
+  </button>
+  <button class="nav-item" onclick="setNav(this)">
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+    <span class="nav-label">Perfil</span>
+  </button>
+</nav>
+
+<script>
+const trucks = {
+  1: { name: 'Garage Burger',    meta: 'Zona A · 🍔 Burgers · ~12 min',    px: 62,  py: 85  },
+  2: { name: 'Taquería del Sur', meta: 'Zona B · 🌮 Street food · ~6 min',  px: 175, py: 85  },
+  3: { name: 'Verde Vida',       meta: 'Zona A · 🌱 Vegano · ~8 min',       px: 62,  py: 230 },
+  4: { name: 'Nori Street',      meta: 'Zona C · 🍣 Sushi · ~20 min',       px: 290, py: 170 },
+  5: { name: 'La Cervecería',    meta: 'Zona B · 🍺 Bebidas · Abre 20h',    px: 175, py: 240 },
+};
+
+function setNav(btn) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function switchTab(tab) {
+  document.getElementById('tab-list').classList.toggle('active', tab === 'list');
+  document.getElementById('tab-map').classList.toggle('active', tab === 'map');
+  document.getElementById('screen-list').classList.toggle('active', tab === 'list');
+  document.getElementById('screen-map').classList.toggle('active', tab === 'map');
+}
+
+function showPopup(id, px, py) {
+  const t = trucks[id];
+  const popup = document.getElementById('map-popup');
+  const wrap  = document.querySelector('.map-svg-wrap');
+  const svgEl = document.querySelector('.map-svg');
+
+  // Convert SVG coords to container px
+  const rect   = svgEl.getBoundingClientRect();
+  const scaleX = rect.width  / 350;
+  const scaleY = rect.height / 420;
+
+  let left = px * scaleX - 85;
+  let top  = py * scaleY - 100;
+  left = Math.max(4, Math.min(left, rect.width - 178));
+  top  = Math.max(4, top);
+
+  document.getElementById('popup-name').textContent = t.name;
+  document.getElementById('popup-meta').textContent = t.meta;
+  popup.style.left = left + 'px';
+  popup.style.top  = top  + 'px';
+  popup.classList.add('visible');
+
+  highlightRow(id);
+}
+
+function closePopup() {
+  document.getElementById('map-popup').classList.remove('visible');
+  document.querySelectorAll('.map-truck-row').forEach(r => r.classList.remove('highlighted'));
+}
+
+function highlightRow(id) {
+  document.querySelectorAll('.map-truck-row').forEach(r => r.classList.remove('highlighted'));
+  const row = document.getElementById('row-' + id);
+  if (row) {
+    row.classList.add('highlighted');
+    row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+// pill filter (visual only)
+document.querySelectorAll('.pill').forEach(p => {
+  p.addEventListener('click', () => {
+    document.querySelectorAll('.pill').forEach(x => x.classList.remove('active'));
+    p.classList.add('active');
+  });
+});
+
+// close popup on map background click
+document.querySelector('.map-svg').addEventListener('click', e => {
+  if (!e.target.closest('.map-pin')) closePopup();
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Tuki – Mi Perfil</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#f8f8f8;color:#111;font-family:'DM Sans',sans-serif;max-width:390px;margin:0 auto;overflow-x:hidden;padding-bottom:88px;}
+
+  /* ── HEADER ── */
+  .header{background:#fff;border-bottom:2px solid #111;padding:13px 20px;display:flex;align-items:center;justify-content:space-between;}
+  .header-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;color:#111;line-height:1;}
+  .header-sub{font-size:10px;color:#888;text-transform:uppercase;letter-spacing:1.2px;margin-top:1px;}
+  .edit-btn{height:34px;padding:0 14px;border-radius:8px;border:1.5px solid #111;background:#fff;font-size:12px;font-weight:700;color:#111;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background 0.12s;}
+  .edit-btn:active{background:#f0f0f0;}
+  .edit-btn.save{background:#111;color:white;border-color:#111;}
+  .edit-btn.save:active{background:#333;}
+
+  /* ── AVATAR SECTION ── */
+  .avatar-section{background:#fff;border-bottom:1.5px solid #e8e8e8;padding:24px 20px 20px;display:flex;align-items:center;gap:16px;}
+  .avatar-wrap{position:relative;flex-shrink:0;}
+  .avatar{width:72px;height:72px;border-radius:50%;background:#d42b2b;border:3px solid #111;box-shadow:3px 3px 0 #111;display:flex;align-items:center;justify-content:center;font-size:28px;overflow:hidden;}
+  .avatar-initials{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:1px;color:white;}
+  .avatar-edit{position:absolute;bottom:-2px;right:-2px;width:24px;height:24px;border-radius:50%;background:#111;border:2px solid white;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:11px;opacity:0;transition:opacity 0.15s;}
+  .editing .avatar-edit{opacity:1;}
+
+  .avatar-info{flex:1;min-width:0;}
+  .avatar-name{font-family:'Playfair Display',serif;font-weight:700;font-size:20px;color:#111;line-height:1.1;margin-bottom:4px;}
+  .avatar-email{font-size:12px;color:#888;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .member-badge{display:inline-flex;align-items:center;gap:5px;background:#f8f8f8;border:1.5px solid #e8e8e8;border-radius:6px;padding:3px 9px;font-size:10px;font-weight:700;color:#444;text-transform:uppercase;letter-spacing:0.5px;}
+  .member-badge-dot{width:5px;height:5px;border-radius:50%;background:#22c55e;}
+
+  /* ── EDIT FORM (hidden by default) ── */
+  .edit-form{display:none;padding:0 20px 16px;background:#fff;border-bottom:1.5px solid #e8e8e8;}
+  .editing .edit-form{display:block;}
+  .editing .avatar-info{display:none;}
+  .form-group{margin-bottom:12px;}
+  .form-label{font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;}
+  .form-input{width:100%;background:#f8f8f8;border:1.5px solid #e8e8e8;border-radius:8px;padding:10px 12px;font-size:14px;font-family:'DM Sans',sans-serif;color:#111;outline:none;transition:border-color 0.13s;}
+  .form-input:focus{border-color:#111;background:#fff;}
+
+  /* ── SECTION BLOCK ── */
+  .section-block{margin:16px 20px 0;background:#fff;border:1.5px solid #111;border-radius:14px;box-shadow:4px 4px 0 #111;overflow:hidden;}
+  .section-head{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:2px;color:#888;padding:12px 16px 8px;border-bottom:1.5px solid #e8e8e8;text-transform:uppercase;}
+
+  /* ── PAYMENT METHOD ── */
+  .pm-row{padding:14px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #f0f0f0;}
+  .pm-row:last-child{border-bottom:none;}
+  .pm-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .pm-mp{background:#009ee3;}
+  .pm-mp-text{font-family:'Arial Black',sans-serif;font-size:13px;font-weight:900;color:white;letter-spacing:-0.5px;}
+  .pm-info{flex:1;}
+  .pm-name{font-size:14px;font-weight:700;color:#111;margin-bottom:2px;}
+  .pm-detail{font-size:11px;color:#888;}
+  .pm-badge{background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d;font-size:9px;font-weight:700;border-radius:4px;padding:2px 7px;text-transform:uppercase;letter-spacing:0.5px;flex-shrink:0;}
+  .pm-action{font-size:12px;color:#d42b2b;font-weight:700;flex-shrink:0;cursor:pointer;}
+
+  .pm-add-row{padding:12px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background 0.12s;}
+  .pm-add-row:active{background:#f8f8f8;}
+  .pm-add-icon{width:36px;height:36px;border-radius:8px;border:1.5px dashed #d42b2b;display:flex;align-items:center;justify-content:center;font-size:18px;color:#d42b2b;flex-shrink:0;}
+  .pm-add-label{font-size:13px;font-weight:700;color:#d42b2b;}
+
+  /* ── SETTINGS ROWS ── */
+  .setting-row{padding:14px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #f0f0f0;cursor:pointer;transition:background 0.12s;}
+  .setting-row:last-child{border-bottom:none;}
+  .setting-row:active{background:#f8f8f8;}
+  .setting-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+  .si-notif{background:#fef3c7;}
+  .si-privacy{background:#f0f9ff;}
+  .si-help{background:#f0fdf4;}
+  .si-lang{background:#f5f3ff;}
+  .si-logout{background:#fee2e2;}
+  .setting-label{font-size:14px;font-weight:600;color:#111;flex:1;}
+  .setting-label.red{color:#d42b2b;}
+  .setting-sub{font-size:11px;color:#888;margin-top:1px;}
+  .setting-arrow{font-size:14px;color:#ccc;flex-shrink:0;}
+  .setting-toggle{width:40px;height:22px;border-radius:11px;background:#e8e8e8;border:1.5px solid #ddd;position:relative;flex-shrink:0;cursor:pointer;transition:background 0.2s;}
+  .setting-toggle.on{background:#111;border-color:#111;}
+  .toggle-dot{width:16px;height:16px;border-radius:50%;background:white;position:absolute;top:2px;left:2px;transition:transform 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2);}
+  .setting-toggle.on .toggle-dot{transform:translateX(18px);}
+
+  /* ── VERSION ── */
+  .version-note{text-align:center;padding:20px;font-size:11px;color:#ccc;margin-top:4px;}
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:390px;background:white;border-top:2px solid #111;display:flex;align-items:stretch;z-index:300;height:68px;}
+  .nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;position:relative;padding:10px 4px 14px;border:none;background:none;cursor:pointer;}
+  .nav-item:not(:last-child){border-right:1.5px solid #e8e8e8;}
+  .nav-item.active{background:#f8f8f8;}
+  .nav-icon{width:24px;height:24px;display:flex;align-items:center;justify-content:center;}
+  .nav-icon svg{width:22px;height:22px;fill:none;stroke:#888;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+  .nav-item.active .nav-icon svg{stroke:#d42b2b;}
+  .nav-label{font-size:10px;font-weight:600;color:#888;letter-spacing:0.3px;}
+  .nav-item.active .nav-label{color:#d42b2b;}
+  .cart-nav .nav-icon{width:44px;height:44px;background:#d42b2b;border-radius:50%;border:2px solid #111;box-shadow:2px 2px 0 #111;margin-bottom:-4px;margin-top:-16px;}
+  .cart-nav .nav-icon svg{stroke:white;width:20px;height:20px;}
+  .cart-nav .nav-label{color:#444;font-weight:700;}
+  .cart-nav-badge{position:absolute;top:4px;right:calc(50% - 26px);background:#111;color:white;font-size:9px;font-weight:700;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;z-index:2;}
+
+  /* ── TOAST ── */
+  .toast{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-8px);background:#111;color:white;padding:9px 18px;border-radius:8px;font-size:12px;font-weight:600;opacity:0;pointer-events:none;transition:opacity 0.18s,transform 0.18s;z-index:500;white-space:nowrap;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<div id="profileRoot">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div>
+      <div class="header-title">Mi Perfil</div>
+      <div class="header-sub">Garage Gourmet Festival</div>
+    </div>
+    <button class="edit-btn" id="editBtn" onclick="toggleEdit()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      Editar
+    </button>
+  </header>
+
+  <!-- AVATAR + INFO -->
+  <div class="avatar-section" id="avatarSection">
+    <div class="avatar-wrap">
+      <div class="avatar"><span class="avatar-initials">TS</span></div>
+      <div class="avatar-edit" onclick="showToast('📷 Cambiar foto')">📷</div>
+    </div>
+    <div class="avatar-info">
+      <div class="avatar-name">Tate Silveira</div>
+      <div class="avatar-email">tate@gmail.com</div>
+      <div class="member-badge"><span class="member-badge-dot"></span>Miembro activo</div>
+    </div>
+    <!-- EDIT FORM (shown when editing) -->
+    <div class="edit-form" style="flex:1;">
+      <div class="form-group">
+        <div class="form-label">Nombre</div>
+        <input class="form-input" type="text" value="Tate Silveira">
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <div class="form-label">Email</div>
+        <input class="form-input" type="email" value="tate@gmail.com">
+      </div>
+    </div>
+  </div>
+
+  <!-- MÉTODO DE PAGO -->
+  <div class="section-block">
+    <div class="section-head">Método de pago</div>
+
+    <div class="pm-row">
+      <div class="pm-icon pm-mp"><span class="pm-mp-text">MP</span></div>
+      <div class="pm-info">
+        <div class="pm-name">Mercado Pago</div>
+        <div class="pm-detail">tate@gmail.com · Cuenta vinculada</div>
+      </div>
+      <div class="pm-badge">Activo</div>
+    </div>
+
+    <div class="pm-row">
+      <div class="pm-icon" style="background:#1a1a1a;font-size:20px;">💳</div>
+      <div class="pm-info">
+        <div class="pm-name">Visa •••• 4321</div>
+        <div class="pm-detail">Vence 08/27</div>
+      </div>
+      <div class="pm-action" onclick="showToast('🗑 Tarjeta eliminada')">Eliminar</div>
+    </div>
+
+    <div class="pm-add-row" onclick="showToast('+ Agregar método de pago')">
+      <div class="pm-add-icon">+</div>
+      <div class="pm-add-label">Agregar método de pago</div>
+    </div>
+  </div>
+
+  <!-- CONFIGURACIÓN -->
+  <div class="section-block">
+    <div class="section-head">Configuración</div>
+
+    <div class="setting-row">
+      <div class="setting-icon si-notif">🔔</div>
+      <div style="flex:1;">
+        <div class="setting-label">Notificaciones</div>
+        <div class="setting-sub">Pedidos listos, novedades</div>
+      </div>
+      <div class="setting-toggle on" onclick="toggleSwitch(this)"><div class="toggle-dot"></div></div>
+    </div>
+
+    <div class="setting-row">
+      <div class="setting-icon si-privacy">🔒</div>
+      <div style="flex:1;">
+        <div class="setting-label">Privacidad</div>
+        <div class="setting-sub">Datos y permisos</div>
+      </div>
+      <div class="setting-arrow">›</div>
+    </div>
+
+    <div class="setting-row">
+      <div class="setting-icon si-lang">🌐</div>
+      <div style="flex:1;">
+        <div class="setting-label">Idioma</div>
+        <div class="setting-sub">Español</div>
+      </div>
+      <div class="setting-arrow">›</div>
+    </div>
+
+    <div class="setting-row">
+      <div class="setting-icon si-help">💬</div>
+      <div style="flex:1;">
+        <div class="setting-label">Ayuda y soporte</div>
+        <div class="setting-sub">Preguntas frecuentes, contacto</div>
+      </div>
+      <div class="setting-arrow">›</div>
+    </div>
+
+    <div class="setting-row" onclick="showToast('👋 Cerrando sesión...')">
+      <div class="setting-icon si-logout">🚪</div>
+      <div style="flex:1;">
+        <div class="setting-label red">Cerrar sesión</div>
+      </div>
+      <div class="setting-arrow" style="color:#d42b2b;">›</div>
+    </div>
+
+  </div>
+
+  <div class="version-note">Tuki v0.1.0 · Garage Gourmet Festival</div>
+
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-item" onclick="showToast('🏠 Inicio')">
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H5a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg></div>
+    <span class="nav-label">Inicio</span>
+  </button>
+  <button class="nav-item" onclick="showToast('📋 Pedidos')">
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg></div>
+    <span class="nav-label">Pedidos</span>
+  </button>
+  <button class="nav-item cart-nav" onclick="showToast('🛒 Carrito')">
+    <span class="cart-nav-badge">3</span>
+    <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="21" r="1" fill="white" stroke="none"/><circle cx="20" cy="21" r="1" fill="white" stroke="none"/><path d="M1 1h4l2.68 13.39a2 2 0 001.99 1.61h9.72a2 2 0 001.98-1.61L23 6H6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <span class="nav-label">Carrito</span>
+  </button>
+  <button class="nav-item" onclick="showToast('🚚 Trucks')">
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+    <span class="nav-label">Trucks</span>
+  </button>
+  <button class="nav-item active">
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+    <span class="nav-label">Perfil</span>
+  </button>
+</nav>
+
+<script>
+  let editing = false;
+
+  function toggleEdit() {
+    editing = !editing;
+    const root = document.getElementById('profileRoot');
+    const btn  = document.getElementById('editBtn');
+    const avSection = document.getElementById('avatarSection');
+
+    if (editing) {
+      root.classList.add('editing');
+      avSection.classList.add('editing');
+      btn.classList.add('save');
+      btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Guardar';
+    } else {
+      root.classList.remove('editing');
+      avSection.classList.remove('editing');
+      btn.classList.remove('save');
+      btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Editar';
+      showToast('✓ Cambios guardados');
+    }
+  }
+
+  function toggleSwitch(el) {
+    el.classList.toggle('on');
+    showToast(el.classList.contains('on') ? '🔔 Notificaciones activadas' : '🔕 Notificaciones desactivadas');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._t);
+    t._t = setTimeout(() => t.classList.remove('show'), 1800);
+  }
+</script>
+</body>
+</html>

@@ -1,76 +1,218 @@
 <script setup lang="ts">
 const { signOut } = useSupabaseClient().auth
-const user = useSupabaseUser()
-
-const cartOpen = ref(false)
+const { itemCount } = useCart()
+const route = useRoute()
 
 async function logout() {
   await signOut()
   navigateTo('/login')
 }
+
+// Derive active tab from current route
+const activeTab = computed(() => {
+  const p = route.path
+  if (p.startsWith('/orders')) return 'orders'
+  if (p.startsWith('/vendor')) return 'trucks'
+  if (p.startsWith('/trucks')) return 'trucks'
+  if (p.startsWith('/profile')) return 'profile'
+  if (p.startsWith('/festival')) return 'home'
+  return 'home'
+})
 </script>
 
 <template>
-  <div class="min-h-screen bg-surface flex flex-col">
-    <!-- Top nav -->
-    <header class="sticky top-0 z-40 bg-surface border-b border-gray-100 shadow-sm">
-      <div class="max-w-lg mx-auto px-4 h-14 flex items-center justify-between">
-        <NuxtLink to="/festival" class="text-xl font-bold text-brand-primary">Tuki</NuxtLink>
+  <div class="min-h-screen bg-white flex flex-col">
 
-        <div class="flex items-center gap-3">
-          <!-- Cart icon — shown on customer pages -->
-          <button
-            class="relative p-2 rounded-full hover:bg-surface-muted transition-colors"
-            aria-label="Open cart"
-            @click="cartOpen = true"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6 text-text-primary"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.5 6h13M7 13l-1-4h12"
-              />
-            </svg>
-          </button>
+    <!-- ── Header ─────────────────────────────────────────────────────── -->
+    <header
+      class="sticky top-0 z-sticky bg-white flex items-center justify-between px-5"
+      style="border-bottom: 2px solid #111111; height: 62px;"
+    >
+      <!-- Logo -->
+      <NuxtLink
+        to="/festival"
+        class="font-display text-black leading-none"
+        style="font-size: 34px; letter-spacing: 4px;"
+      >
+        TU<span class="text-red">KI</span>
+      </NuxtLink>
 
-          <!-- Order history link -->
-          <NuxtLink
-            to="/orders"
-            class="p-2 rounded-full hover:bg-surface-muted transition-colors"
-            aria-label="My orders"
+      <!-- Actions -->
+      <div class="flex items-center gap-2.5">
+        <!-- Profile button -->
+        <button
+          class="flex items-center justify-center rounded-full bg-gray-50 transition-transform active:scale-[0.91]"
+          style="width: 38px; height: 38px; border: 1.5px solid #111111; font-size: 16px;"
+          aria-label="Mi perfil"
+          @click="logout"
+        >
+          👤
+        </button>
+
+        <!-- Cart button -->
+        <button
+          class="relative flex items-center justify-center rounded-full bg-red transition-transform active:scale-[0.91]"
+          style="width: 44px; height: 44px; border: none;"
+          aria-label="Carrito"
+          @click="navigateTo('/checkout')"
+        >
+          <svg style="width:20px;height:20px;fill:white;" viewBox="0 0 24 24">
+            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/>
+          </svg>
+          <span
+            v-if="itemCount > 0"
+            class="absolute flex items-center justify-center bg-black text-white font-bold rounded-full"
+            style="top: -5px; right: -5px; width: 19px; height: 19px; font-size: 10px;"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6 text-text-primary"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-              />
-            </svg>
-          </NuxtLink>
-        </div>
+            {{ itemCount }}
+          </span>
+        </button>
       </div>
     </header>
 
-    <!-- Main content -->
-    <main class="flex-1 max-w-lg mx-auto w-full px-4 py-4">
+    <!-- ── Main content ────────────────────────────────────────────────── -->
+    <main class="flex-1 max-w-lg mx-auto w-full px-4 pt-4 pb-[88px]">
       <slot />
     </main>
 
-    <!-- Cart drawer (wired in Phase 4) -->
-    <CartDrawer v-model:open="cartOpen" />
+    <!-- ── Bottom navigation ───────────────────────────────────────────── -->
+    <nav
+      class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-lg bg-white flex items-stretch z-overlay"
+      style="border-top: 2px solid #111111; height: 68px;"
+    >
+      <!-- Inicio -->
+      <NuxtLink
+        to="/festival"
+        class="flex-1 flex flex-col items-center justify-center gap-1 transition-colors"
+        :class="activeTab === 'home' ? 'bg-gray-50' : ''"
+        style="padding: 10px 4px 14px; border-right: 1.5px solid #e8e8e8;"
+        aria-label="Inicio"
+      >
+        <span class="flex items-center justify-center" style="width:22px;height:22px;">
+          <svg style="width:20px;height:20px;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;"
+            :style="{ stroke: activeTab === 'home' ? '#d42b2b' : '#888888' }"
+            viewBox="0 0 24 24"
+          >
+            <path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H5a1 1 0 01-1-1V9.5z"/>
+            <path d="M9 21V12h6v9"/>
+          </svg>
+        </span>
+        <span
+          class="font-semibold"
+          :style="{ color: activeTab === 'home' ? '#d42b2b' : '#888888', fontSize: '10px' }"
+        >
+          Inicio
+        </span>
+      </NuxtLink>
+
+      <!-- Pedidos -->
+      <NuxtLink
+        to="/orders"
+        class="flex-1 flex flex-col items-center justify-center gap-1 relative transition-colors"
+        :class="activeTab === 'orders' ? 'bg-gray-50' : ''"
+        style="padding: 10px 4px 14px; border-right: 1.5px solid #e8e8e8;"
+        aria-label="Pedidos"
+      >
+        <span class="flex items-center justify-center" style="width:22px;height:22px;">
+          <svg style="width:20px;height:20px;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;"
+            :style="{ stroke: activeTab === 'orders' ? '#d42b2b' : '#888888' }"
+            viewBox="0 0 24 24"
+          >
+            <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+            <rect x="9" y="3" width="6" height="4" rx="1"/>
+            <path d="M9 12h6M9 16h4"/>
+          </svg>
+        </span>
+        <span
+          class="font-semibold"
+          :style="{ color: activeTab === 'orders' ? '#d42b2b' : '#888888', fontSize: '10px' }"
+        >
+          Pedidos
+        </span>
+      </NuxtLink>
+
+      <!-- Carrito (elevated center) -->
+      <button
+        class="flex-1 flex flex-col items-center justify-center gap-1 relative transition-colors"
+        style="padding: 10px 4px 14px; border-right: 1.5px solid #e8e8e8;"
+        aria-label="Carrito"
+        @click="navigateTo('/checkout')"
+      >
+        <!-- Badge -->
+        <span
+          v-if="itemCount > 0"
+          class="absolute z-10 flex items-center justify-center bg-black text-white font-bold rounded-full"
+          style="top: 4px; right: calc(50% - 26px); width: 16px; height: 16px; font-size: 9px;"
+        >
+          {{ itemCount }}
+        </span>
+        <!-- Elevated red circle -->
+        <span
+          class="flex items-center justify-center rounded-full bg-red"
+          style="width:44px;height:44px;border:2px solid #111111;box-shadow:2px 2px 0 #111111;margin-bottom:-4px;margin-top:-16px;"
+        >
+          <svg style="width:20px;height:20px;fill:none;stroke:white;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;" viewBox="0 0 24 24">
+            <circle cx="9" cy="21" r="1" fill="white" stroke="none"/>
+            <circle cx="20" cy="21" r="1" fill="white" stroke="none"/>
+            <path d="M1 1h4l2.68 13.39a2 2 0 001.99 1.61h9.72a2 2 0 001.98-1.61L23 6H6"/>
+          </svg>
+        </span>
+        <span class="font-bold text-gray-700" style="font-size: 10px;">Carrito</span>
+      </button>
+
+      <!-- Trucks -->
+      <NuxtLink
+        to="/trucks"
+        class="flex-1 flex flex-col items-center justify-center gap-1 transition-colors"
+        :class="activeTab === 'trucks' ? 'bg-gray-50' : ''"
+        style="padding: 10px 4px 14px; border-right: 1.5px solid #e8e8e8;"
+        aria-label="Trucks"
+      >
+        <span class="flex items-center justify-center" style="width:22px;height:22px;">
+          <svg style="width:20px;height:20px;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;"
+            :style="{ stroke: activeTab === 'trucks' ? '#d42b2b' : '#888888' }"
+            viewBox="0 0 24 24"
+          >
+            <rect x="1" y="3" width="15" height="13" rx="1"/>
+            <path d="M16 8h4l3 5v3h-7V8z"/>
+            <circle cx="5.5" cy="18.5" r="2.5"/>
+            <circle cx="18.5" cy="18.5" r="2.5"/>
+          </svg>
+        </span>
+        <span
+          class="font-semibold"
+          :style="{ color: activeTab === 'trucks' ? '#d42b2b' : '#888888', fontSize: '10px' }"
+        >
+          Trucks
+        </span>
+      </NuxtLink>
+
+      <!-- Perfil -->
+      <NuxtLink
+        to="/profile"
+        class="flex-1 flex flex-col items-center justify-center gap-1 transition-colors"
+        :class="activeTab === 'profile' ? 'bg-gray-50' : ''"
+        style="padding: 10px 4px 14px;"
+        aria-label="Perfil"
+      >
+        <span class="flex items-center justify-center" style="width:22px;height:22px;">
+          <svg
+            style="width:20px;height:20px;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;"
+            :style="{ stroke: activeTab === 'profile' ? '#d42b2b' : '#888888' }"
+            viewBox="0 0 24 24"
+          >
+            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+        </span>
+        <span
+          class="font-semibold"
+          :style="{ color: activeTab === 'profile' ? '#d42b2b' : '#888888', fontSize: '10px' }"
+        >Perfil</span>
+      </NuxtLink>
+    </nav>
+
+    <!-- Global toasts -->
+    <AppToast />
   </div>
 </template>
