@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Tuki – Brutal Burger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red:      #d42b2b;
+    --red-dk:   #aa1f1f;
+    --ink:      #111111;
+    --ink-mid:  #444444;
+    --ink-light:#888888;
+    --border:   #e8e8e8;
+    --bg:       #ffffff;
+    --bg-off:   #f8f8f8;
+    --radius:   14px;
+    --radius-sm:10px;
+    --cart-h:   72px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    max-width: 390px;
+    margin: 0 auto;
+    overflow-x: hidden;
+    padding-bottom: calc(var(--cart-h) + 16px);
+  }
+
+  /* ─── HERO HEADER ─── */
+  .hero {
+    position: relative;
+    height: 220px;
+    background: #1a1a1a;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
+    background-size: 10px 10px;
+  }
+  .hero-stripe {
+    position: absolute; top: -40px; right: -30px;
+    width: 260px; height: 340px;
+    background: rgba(212, 43, 43, 0.15);
+    transform: rotate(-18deg); border-radius: 8px;
+  }
+  .hero-stripe2 {
+    position: absolute; bottom: -60px; left: -40px;
+    width: 200px; height: 200px;
+    background: rgba(212, 43, 43, 0.08);
+    transform: rotate(12deg); border-radius: 8px;
+  }
+
+  .hero-emoji {
+    position: absolute;
+    right: 28px; bottom: 28px;
+    font-size: 90px; line-height: 1;
+    opacity: 0.85;
+    animation: float 3s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%,100% { transform: translateY(0); }
+    50%      { transform: translateY(-8px); }
+  }
+
+  /* Back button */
+  .back-btn {
+    position: absolute; top: 16px; left: 16px; z-index: 10;
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    border: 1.5px solid rgba(255,255,255,0.25);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; backdrop-filter: blur(4px);
+    transition: background 0.14s;
+    color: white; font-size: 16px; font-weight: 700;
+  }
+  .back-btn:active { background: rgba(255,255,255,0.25); }
+
+  /* Cart btn in hero */
+  .hero-cart {
+    position: absolute; top: 16px; right: 16px; z-index: 10;
+    background: var(--red); border: none;
+    border-radius: 50%; width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+  .hero-cart svg { width: 17px; height: 17px; fill: white; }
+  .hero-cart-badge {
+    position: absolute; top: -4px; right: -4px;
+    background: var(--ink); color: white;
+    font-size: 9px; font-weight: 700;
+    border-radius: 50%; width: 16px; height: 16px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .hero-content {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 20px 20px 18px;
+    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%);
+  }
+
+  .truck-status {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 5px; padding: 3px 9px;
+    font-size: 10px; font-weight: 700; color: white;
+    margin-bottom: 8px;
+    backdrop-filter: blur(4px);
+  }
+  .truck-status .dot { width: 5px; height: 5px; border-radius: 50%; background: #22c55e; }
+
+  .truck-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px; line-height: 0.9; letter-spacing: 1px;
+    color: white; margin-bottom: 4px;
+  }
+  .truck-cat {
+    font-size: 11px; color: rgba(255,255,255,0.6);
+    text-transform: uppercase; letter-spacing: 1.5px;
+  }
+
+  /* ─── INFO STRIP ─── */
+  .info-strip {
+    display: flex;
+    border-bottom: 1.5px solid var(--border);
+    background: var(--bg);
+  }
+
+  .info-item {
+    flex: 1; padding: 14px 12px;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 3px;
+    text-align: center;
+  }
+  .info-item:not(:last-child) { border-right: 1.5px solid var(--border); }
+
+  .info-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px; letter-spacing: 1px; color: var(--ink); line-height: 1;
+  }
+  .info-value.red { color: var(--red); }
+  .info-label {
+    font-size: 9px; color: var(--ink-light);
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+
+  /* ─── DESCRIPTION ─── */
+  .desc-block {
+    padding: 16px 20px;
+    border-bottom: 1.5px solid var(--border);
+  }
+  .desc-text {
+    font-size: 13px; color: var(--ink-mid); line-height: 1.6;
+  }
+
+  /* ─── CATEGORY TABS ─── */
+  .tabs-wrap {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--bg);
+    border-bottom: 2px solid var(--ink);
+  }
+  .tabs {
+    display: flex; overflow-x: auto; scrollbar-width: none;
+    padding: 0 20px; gap: 0;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+
+  .tab {
+    flex-shrink: 0;
+    padding: 13px 18px;
+    font-size: 12px; font-weight: 700;
+    color: var(--ink-light); cursor: pointer;
+    border-bottom: 2.5px solid transparent;
+    margin-bottom: -2px;
+    transition: color 0.14s, border-color 0.14s;
+    white-space: nowrap; letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+  .tab.active { color: var(--red); border-bottom-color: var(--red); }
+
+  /* ─── MENU SECTIONS ─── */
+  .menu-section { padding: 0 20px; }
+
+  .section-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px; letter-spacing: 2.5px; color: var(--ink);
+    padding: 20px 0 12px;
+    border-bottom: 1.5px solid var(--border);
+    margin-bottom: 0;
+  }
+
+  /* ─── MENU ITEM ─── */
+  .menu-item {
+    display: flex; align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    gap: 14px;
+    animation: fade-up 0.3s ease both;
+  }
+  .menu-item:last-child { border-bottom: none; }
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .item-info { flex: 1; min-width: 0; }
+
+  .item-name-row {
+    display: flex; align-items: center; gap: 6px; margin-bottom: 3px;
+  }
+  .item-name {
+    font-size: 14px; font-weight: 700; color: var(--ink); line-height: 1.2;
+  }
+  .item-badge {
+    font-size: 9px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.8px; padding: 2px 6px; border-radius: 4px;
+    flex-shrink: 0;
+  }
+  .badge-popular { background: #fef3c7; color: #92400e; }
+  .badge-nuevo   { background: #dcfce7; color: #166534; }
+  .badge-picante { background: #fee2e2; color: #991b1b; }
+
+  .item-desc {
+    font-size: 11px; color: var(--ink-light); line-height: 1.5;
+    margin-bottom: 6px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .item-bottom {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .item-price {
+    font-size: 15px; font-weight: 700; color: var(--ink);
+  }
+
+  /* Quantity control */
+  .qty-ctrl {
+    display: flex; align-items: center; gap: 0;
+    border: 1.5px solid var(--ink); border-radius: 8px;
+    overflow: hidden;
+  }
+  .qty-btn {
+    width: 28px; height: 28px;
+    background: var(--bg); color: var(--ink);
+    font-size: 16px; font-weight: 700;
+    border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.1s;
+    flex-shrink: 0;
+  }
+  .qty-btn:active { background: var(--bg-off); }
+  .qty-btn.plus { background: var(--red); color: white; }
+  .qty-btn.plus:active { background: var(--red-dk); }
+  .qty-num {
+    min-width: 24px; text-align: center;
+    font-size: 13px; font-weight: 700; color: var(--ink);
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    padding: 0 4px; line-height: 28px;
+  }
+
+  /* Simple add btn (when qty = 0) */
+  .add-btn {
+    width: 28px; height: 28px; border-radius: 7px;
+    border: 1.5px solid var(--ink);
+    background: var(--red); color: white;
+    font-size: 20px; line-height: 1;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.1s, background 0.1s;
+    flex-shrink: 0;
+  }
+  .add-btn:active { transform: scale(0.86); background: var(--red-dk); }
+
+  /* ─── DIVIDER between sections ─── */
+  .section-divider {
+    height: 8px; background: var(--bg-off);
+    border-top: 1.5px solid var(--border);
+    border-bottom: 1.5px solid var(--border);
+    margin: 4px -20px 0;
+  }
+
+  /* ─── CART BAR ─── */
+  .cart-bar {
+    position: fixed; bottom: 0;
+    left: 50%; transform: translateX(-50%);
+    width: 390px;
+    padding: 12px 20px 20px;
+    z-index: 200;
+    pointer-events: none;
+  }
+
+  .cart-bar-inner {
+    background: var(--ink);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    display: flex; align-items: center; justify-content: space-between;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.28);
+    pointer-events: all;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    border: 1.5px solid var(--ink);
+  }
+  .cart-bar-inner:active { transform: scale(0.98); }
+
+  .cart-bar-left { display: flex; align-items: center; gap: 12px; }
+  .cart-count {
+    background: var(--red); color: white;
+    width: 28px; height: 28px; border-radius: 50%;
+    font-size: 13px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .cart-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px; letter-spacing: 2px; color: white;
+  }
+  .cart-total {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px; letter-spacing: 1px; color: white;
+  }
+
+  /* ─── TOAST ─── */
+  .toast {
+    position: fixed; top: 80px; left: 50%;
+    transform: translateX(-50%) translateY(-8px);
+    background: var(--ink); color: white;
+    padding: 9px 18px; border-radius: 8px;
+    font-size: 12px; font-weight: 600;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.18s, transform 0.18s;
+    z-index: 500; white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-stripe"></div>
+  <div class="hero-stripe2"></div>
+  <div class="hero-emoji">🍔</div>
+
+  <div class="back-btn" onclick="showToast('← Volver al evento')">←</div>
+
+  <div class="hero-cart" onclick="showToast('🛒 Carrito')">
+    <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/></svg>
+    <span class="hero-cart-badge" id="heroBadge">3</span>
+  </div>
+
+  <div class="hero-content">
+    <div class="truck-status"><span class="dot"></span>Abierto ahora</div>
+    <div class="truck-name">Brutal<br>Burger</div>
+    <div class="truck-cat">Burgers · Street Food Americano</div>
+  </div>
+</div>
+
+<!-- INFO STRIP -->
+<div class="info-strip">
+  <div class="info-item">
+    <div class="info-value red">★ 4.8</div>
+    <div class="info-label">Rating</div>
+  </div>
+  <div class="info-item">
+    <div class="info-value">~8</div>
+    <div class="info-label">Min espera</div>
+  </div>
+  <div class="info-item">
+    <div class="info-value">18–00</div>
+    <div class="info-label">Horario</div>
+  </div>
+  <div class="info-item">
+    <div class="info-value">📍 B3</div>
+    <div class="info-label">Ubicación</div>
+  </div>
+</div>
+
+<!-- DESCRIPTION -->
+<div class="desc-block">
+  <div class="desc-text">Smash burgers de autor con ingredientes de primera. Carne Aberdeen Angus, quesos importados y salsas caseras. Todo hecho al momento, sin congelados.</div>
+</div>
+
+<!-- CATEGORY TABS -->
+<div class="tabs-wrap">
+  <div class="tabs">
+    <div class="tab active" onclick="scrollTo('burgers', this)">Burgers</div>
+    <div class="tab" onclick="scrollTo('extras', this)">Extras</div>
+    <div class="tab" onclick="scrollTo('bebidas', this)">Bebidas</div>
+    <div class="tab" onclick="scrollTo('combos', this)">Combos</div>
+  </div>
+</div>
+
+<!-- MENU -->
+<div class="menu-section">
+
+  <!-- BURGERS -->
+  <div class="section-label" id="burgers">Burgers</div>
+
+  <div class="menu-item">
+    <div class="item-info">
+      <div class="item-name-row">
+        <div class="item-name">Double Smash</div>
+        <span class="item-badge badge-popular">Popular</span>
+      </div>
+      <div class="item-desc">Doble medallón, cheddar americano, pickles, salsa especial</div>
+      <div class="item-bottom">
+        <div class="item-price">$420</div>
+        <div class="qty-ctrl" id="ctrl-1" style="display:none">
+          <button class="qty-btn minus" onclick="changeQty('1',-1)">−</button>
+          <span class="qty-num" id="qty-1">1</span>
+          <button class="qty-btn plus" onclick="changeQty('1',1)">+</button>
+        </div>
+        <button class="add-btn" id="add-1" onclick="addItem('1', 420, this)">+</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="menu-item">
+    <div class="item-info">
+      <div class="item-name-row">
+        <div class="item-name">Classic Smash</div>
+      </div>
+      <div class="item-desc">Medallón simple, queso suizo, lechuga, tomate, mostaza</div>
+      <div class="item-bottom">
+        <div class="item-price">$280</div>
+        <div class="qty-ctrl" id="ctrl-2" style="display:none">
+          <button class="qty-btn minus" onclick="changeQty('2',-1)">−</button>
+          <span class="qty-num" id="qty-2">1</span>
+          <button class="qty-btn plus" onclick="changeQty('2',1)">+</button>
+        </div>
+        <button class="add-btn" id="add-2" onclick="addItem('2', 280, this)">+</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="menu-item">
+    <div class="item-info">
+      <div class="item-name-row">
+        <div class="item-name">BBQ Bacon Smash</div>
+        <span class="item-badge badge-nuevo">Nuevo</span>
+      </div>
+      <div class="item-desc">Doble medallón, bacon crocante, BBQ casera, cebolla crispy</div>
+      <div class="item-bottom">
+        <div class="item-price">$490</div>
+        <div class="qty-ctrl" id="ctrl-3" style="display:none">
+          <button class="qty-btn minus" onclick="changeQty('3',-1)">−</button>
+          <span class="qty-num" id="qty-3">1</span>
+          <button class="qty-btn plus" onclick="changeQty('3',1)">+</button>
+        </div>
+        <button class="add-btn" id="add-3" onclick="addItem('3', 490, this)">+</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="menu-item">
+    <div class="item-info">
+      <div class="item-name-row">
+        <div class="item-name">Jalapeño Smash</div>
+        <span class="item-badge badge-picante">🌶 Picante</span>
+      </div>
+      <div class="item-desc">Doble medallón, jalapeños frescos, pepper jack, chipotle mayo</div>
+      <div class="item-bottom">
+        <div class="item-price">$460</div>
+        <div class="qty-ctrl" id="ctrl-4" style="display:none">
+          <button class="qty-btn minus" onclick="changeQty('4',-1)">−</button>
+          <span class="qty-num" id="qty-4">1</span>
+          <button class="qty-btn plus" onclick="changeQty('4',1)">+</button>
+        </div>
+        <button class="add-btn" id="add-4" onclick="addItem('4', 460, this)">+</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- EXTRAS -->
+  <div class="section-label" id="extras">Extras</div>
+
+  <div class="menu-item">
+    <div class="item-info">
+      <div class="item-name-row">
+        <div class="item-name">Cheese Fries</div>
+        <span class="item-badge badge-popular">Popular</span>
+      </div>
+      <div class="item-desc">Papas fritas, salsa de queso cheddar, cebolla de verdeo</div>
+      <div class="item-bottom">
+        <div class="item-price">$190</div>
+        <div class="qty-ctrl" id="ctrl-5" style="display:none">
+          <button class="qty-btn minus" onclick="changeQty('5',-1)">−</button>
+          <span class="qty-num" id="qty-5">1</span>
+          <button class="qty-btn plus" onclick="changeQty('5',1)">+</button>
+        </div>
+        <button class="add-btn" id="add-5" onclick="addItem('5', 190, this)">+</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="menu-item">
+    <div class="item-info">
+      <div class="item-name-row">
+        <div class="item-name">Papas Clásicas</div>
+      </div>
+      <div class="item-desc">Papas fritas crocantes, sal marina</div>
+      <div class="item-bottom">
+        <div class="item-price">$130</div>
+        <div class="qty-ctrl" id="ctrl-6" style="display:none">
+          <button class="qty-btn minus" onclick="changeQty('6',-1)">−</button>
+          <span class="qty-num" id="qty-6">1</span>
+          <button class="qty-btn plus" onclick="changeQty('6',1)">+</button>
+        </div>
+        <button class="add-btn" id="add-6" onclick="addItem('6', 130, this)">+</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="menu-item">
+    <div class="item-info">
+      <div class="item-name-row">
+        <div class="item-name">Onion Rings</div>
+      </div>
+      <div class="item-desc">Aros de cebolla apanados, dip de ranch</div>
+      <div class="item-bottom">
+        <div class="item-price">$160</div>
+        <div class="qty-ctrl" id="ctrl-7" style="display:none">
+          <button class="qty-btn minus" onclick="changeQty('7',-1)">−</button>
+          <span class="qty-num" id="qty-7">1</span>
+          <button class="qty-btn plus" onclick="changeQty('7',1)">+</button>
+        </div>
+        <button class="add-btn" id="add-7" onclick="addItem('7', 160, this)">+</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- BEBIDAS -->
+  <div class="section-label" id="bebidas">Bebidas</div>
+
+  <div class="menu-item">
+    <div class="item-info">
+      <div class="item-name-row">
+        <div class="item-name">Agua Mineral</div>
+      </div>
+      <div class="item-desc">500ml, con o sin gas</div>
+      <div class="item-bottom">
+        <div class="item-price">$80</div>
+        <div class="qty-ctrl" id="ctrl-8" style="display:none">
+          <button class="qty-btn minus" onclick="changeQty('8',-1)">−</button>
+          <span class="qty-num" id="qty-8">1</span>
+          <button class="qty-btn plus" onclick="changeQty('8',1)">+</button>
+        </div>
+        <button class="add-btn" id="add-8" onclick="addItem('8', 80, this)">+</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="menu-item">
+    <div class="item-info">
+      <div class="item-name-row">
+        <div class="item-name">Coca-Cola</div>
+      </div>
+      <div class="item-desc">354ml, lata fría</div>
+      <div class="item-bottom">
+        <div class="item-price">$120</div>
+        <div class="qty-ctrl" id="ctrl-9" style="display:none">
+          <button class="qty-btn minus" onclick="changeQty('9',-1)">−</button>
+          <span class="qty-num" id="qty-9">1</span>
+          <button class="qty-btn plus" onclick="changeQty('9',1)">+</button>
+        </div>
+        <button class="add-btn" id="add-9" onclick="addItem('9', 120, this)">+</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="menu-item">
+    <div class="item-info">
+      <div class="item-name-row">
+        <div class="item-name">Limonada Natural</div>
+        <span class="item-badge badge-nuevo">Nuevo</span>
+      </div>
+      <div class="item-desc">Limonada exprimida al momento, menta fresca</div>
+      <div class="item-bottom">
+        <div class="item-price">$150</div>
+        <div class="qty-ctrl" id="ctrl-10" style="display:none">
+          <button class="qty-btn minus" onclick="changeQty('10',-1)">−</button>
+          <span class="qty-num" id="qty-10">1</span>
+          <button class="qty-btn plus" onclick="changeQty('10',1)">+</button>
+        </div>
+        <button class="add-btn" id="add-10" onclick="addItem('10', 150, this)">+</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- COMBOS -->
+  <div class="section-label" id="combos">Combos</div>
+
+  <div class="menu-item">
+    <div class="item-info">
+      <div class="item-name-row">
+        <div class="item-name">Combo Classic</div>
+        <span class="item-badge badge-popular">Popular</span>
+      </div>
+      <div class="item-desc">Classic Smash + Papas Clásicas + Coca-Cola</div>
+      <div class="item-bottom">
+        <div class="item-price">$480</div>
+        <div style="font-size:10px;color:var(--ink-light);margin-left:4px;text-decoration:line-through;">$530</div>
+        <div class="qty-ctrl" id="ctrl-11" style="display:none">
+          <button class="qty-btn minus" onclick="changeQty('11',-1)">−</button>
+          <span class="qty-num" id="qty-11">1</span>
+          <button class="qty-btn plus" onclick="changeQty('11',1)">+</button>
+        </div>
+        <button class="add-btn" id="add-11" onclick="addItem('11', 480, this)">+</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="menu-item">
+    <div class="item-info">
+      <div class="item-name-row">
+        <div class="item-name">Combo Double</div>
+      </div>
+      <div class="item-desc">Double Smash + Cheese Fries + bebida a elección</div>
+      <div class="item-bottom">
+        <div class="item-price">$680</div>
+        <div style="font-size:10px;color:var(--ink-light);margin-left:4px;text-decoration:line-through;">$730</div>
+        <div class="qty-ctrl" id="ctrl-12" style="display:none">
+          <button class="qty-btn minus" onclick="changeQty('12',-1)">−</button>
+          <span class="qty-num" id="qty-12">1</span>
+          <button class="qty-btn plus" onclick="changeQty('12',1)">+</button>
+        </div>
+        <button class="add-btn" id="add-12" onclick="addItem('12', 680, this)">+</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- CART BAR -->
+<div class="cart-bar">
+  <div class="cart-bar-inner" onclick="showToast('🛒 Carrito → próximamente')">
+    <div class="cart-bar-left">
+      <div class="cart-count" id="cartCount">3</div>
+      <div class="cart-label">Ver carrito</div>
+    </div>
+    <div class="cart-total" id="cartTotal">$790</div>
+  </div>
+</div>
+
+<script>
+  let cartCount = 3, cartTotal = 790;
+  const qtys = {};
+
+  function addItem(id, price, btn) {
+    qtys[id] = 1;
+    cartCount++; cartTotal += price;
+    updateCart();
+    btn.style.display = 'none';
+    document.getElementById('ctrl-' + id).style.display = 'flex';
+    animatePop('ctrl-' + id);
+  }
+
+  function changeQty(id, delta) {
+    const price = getPrice(id);
+    qtys[id] = (qtys[id] || 0) + delta;
+    if (qtys[id] <= 0) {
+      qtys[id] = 0;
+      document.getElementById('ctrl-' + id).style.display = 'none';
+      document.getElementById('add-' + id).style.display = 'flex';
+      cartCount--; cartTotal -= price;
+    } else {
+      document.getElementById('qty-' + id).textContent = qtys[id];
+      cartCount += delta; cartTotal += delta * price;
+    }
+    updateCart();
+  }
+
+  function getPrice(id) {
+    const prices = {'1':420,'2':280,'3':490,'4':460,'5':190,'6':130,'7':160,'8':80,'9':120,'10':150,'11':480,'12':680};
+    return prices[id] || 0;
+  }
+
+  function updateCart() {
+    document.getElementById('cartCount').textContent = cartCount;
+    document.getElementById('cartTotal').textContent = '$' + cartTotal;
+    document.getElementById('heroBadge').textContent = cartCount;
+  }
+
+  function animatePop(id) {
+    const el = document.getElementById(id);
+    el.style.animation = 'none';
+    el.offsetHeight;
+    el.style.animation = 'pop 0.22s ease';
+  }
+
+  function scrollTo(id, tab) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('show'), 1800);
+  }
+</script>
+
+<style>
+  @keyframes pop {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.15); }
+    100% { transform: scale(1); }
+  }
+</style>
+</body>
+</html>

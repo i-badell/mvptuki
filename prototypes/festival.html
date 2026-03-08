@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Tuki – Garage Gourmet Festival</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #ffffff;
+    --bg-off:   #f8f8f8;
+    --red:      #d42b2b;
+    --red-dk:   #aa1f1f;
+    --ink:      #111111;
+    --ink-mid:  #444444;
+    --ink-light:#888888;
+    --border:   #e8e8e8;
+    --white:    #ffffff;
+    --radius:   14px;
+    --radius-sm:10px;
+    --nav-h:    68px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    max-width: 390px;
+    margin: 0 auto;
+    overflow-x: hidden;
+  }
+
+  /* ─── HEADER ─── */
+  .header {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--white);
+    border-bottom: 2px solid var(--ink);
+    padding: 13px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 34px; letter-spacing: 4px; color: var(--ink); line-height: 1;
+  }
+  .logo span { color: var(--red); }
+
+  .header-actions { display: flex; align-items: center; gap: 10px; }
+
+  /* Profile button in header */
+  .profile-btn {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: var(--bg-off); border: 1.5px solid var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: transform 0.14s;
+    font-size: 16px;
+  }
+  .profile-btn:active { transform: scale(0.91); }
+
+  .cart-btn {
+    position: relative;
+    background: var(--red); border: none;
+    border-radius: 50%; width: 44px; height: 44px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: transform 0.15s, background 0.15s;
+  }
+  .cart-btn:active { transform: scale(0.91); background: var(--red-dk); }
+  .cart-btn svg { width: 20px; height: 20px; fill: white; }
+
+  .cart-badge {
+    position: absolute; top: -5px; right: -5px;
+    background: var(--ink); color: white;
+    font-size: 10px; font-weight: 700;
+    border-radius: 50%; width: 19px; height: 19px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ─── HERO ─── */
+  .event-hero {
+    margin: 16px 20px;
+    border-radius: var(--radius);
+    overflow: hidden; height: 210px;
+    background: var(--red);
+    position: relative;
+    animation: fade-up 0.4s ease both;
+  }
+
+  .hero-half {
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(0,0,0,0.18) 1px, transparent 1px);
+    background-size: 10px 10px;
+  }
+  .hero-stripe {
+    position: absolute; top: -30px; right: -20px;
+    width: 220px; height: 300px;
+    background: rgba(255,255,255,0.07);
+    transform: rotate(-18deg); border-radius: 8px;
+  }
+  .hero-stamp {
+    position: absolute; bottom: -60px; left: -60px;
+    width: 200px; height: 200px;
+    border: 3px solid rgba(255,255,255,0.15); border-radius: 50%;
+  }
+  .hero-stamp2 {
+    position: absolute; bottom: -45px; left: -45px;
+    width: 170px; height: 170px;
+    border: 1.5px dashed rgba(255,255,255,0.12); border-radius: 50%;
+  }
+
+  .hero-content {
+    position: relative; padding: 22px 20px; height: 100%;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+
+  .live-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: white; color: var(--red);
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 5px 13px; border-radius: 20px; width: fit-content;
+  }
+  .live-badge::before {
+    content: ''; width: 6px; height: 6px;
+    background: var(--red); border-radius: 50%;
+    animation: blink 1.2s ease-in-out infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px; line-height: 0.9; letter-spacing: 1px; color: white;
+  }
+  .hero-title em {
+    font-family: 'Playfair Display', serif;
+    font-style: italic; font-size: 36px; color: rgba(255,255,255,0.85);
+  }
+
+  .hero-meta { display: flex; gap: 16px; flex-wrap: wrap; }
+  .hero-meta-item {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 11px; color: rgba(255,255,255,0.75);
+  }
+  .hero-meta-item svg { width: 12px; height: 12px; fill: white; opacity: 0.9; flex-shrink: 0; }
+
+  /* ─── ORDERS QUICK ACCESS ─── */
+  .orders-strip {
+    margin: 0 20px 4px;
+    background: #fff8f8;
+    border: 1.5px solid var(--red);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer; transition: background 0.13s;
+    animation: fade-up 0.4s ease 0.1s both;
+  }
+  .orders-strip:active { background: #ffeded; }
+
+  .orders-strip-left { display: flex; align-items: center; gap: 10px; }
+
+  .orders-icon {
+    width: 34px; height: 34px; border-radius: 8px;
+    background: var(--red); display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .orders-icon svg { width: 18px; height: 18px; fill: white; }
+
+  .orders-text-top {
+    font-size: 12px; font-weight: 700; color: var(--ink); line-height: 1.2;
+  }
+  .orders-text-sub {
+    font-size: 11px; color: var(--red); font-weight: 500;
+  }
+
+  .orders-arrow {
+    font-size: 18px; color: var(--red); font-weight: 700;
+  }
+
+  /* ─── SECTION HEADER ─── */
+  .section-header {
+    padding: 0 20px; margin: 22px 0 14px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px; letter-spacing: 2.5px; color: var(--ink);
+  }
+  .section-cta {
+    font-size: 12px; color: var(--red); font-weight: 700;
+    cursor: pointer; text-decoration: none;
+    border: 1.5px solid var(--red); padding: 4px 11px;
+    border-radius: 5px; transition: background 0.13s, color 0.13s;
+    white-space: nowrap;
+  }
+  .section-cta:active { background: var(--red); color: white; }
+
+  /* ─── CATEGORY PILLS ─── */
+  .cat-scroll {
+    padding: 0 20px; display: flex; gap: 8px;
+    overflow-x: auto; scrollbar-width: none; margin-bottom: 20px;
+  }
+  .cat-scroll::-webkit-scrollbar { display: none; }
+
+  .cat-pill {
+    flex-shrink: 0; padding: 8px 18px; border-radius: 6px;
+    font-size: 12px; font-weight: 600; cursor: pointer;
+    transition: all 0.14s;
+    border: 1.5px solid var(--border);
+    background: var(--white); color: var(--ink-mid);
+    white-space: nowrap; letter-spacing: 0.3px;
+  }
+  .cat-pill.active { background: var(--ink); border-color: var(--ink); color: white; }
+
+  /* ─── TRUCK CAROUSEL ─── */
+  .trucks-scroll {
+    padding: 0 20px; display: flex; gap: 14px;
+    overflow-x: auto; scrollbar-width: none; padding-bottom: 6px;
+  }
+  .trucks-scroll::-webkit-scrollbar { display: none; }
+
+  /* ─── TRUCK CARD ─── */
+  .truck-card {
+    flex-shrink: 0; width: 265px;
+    background: var(--white); border-radius: var(--radius);
+    overflow: hidden; border: 1.5px solid var(--ink);
+    cursor: pointer; transition: transform 0.16s, box-shadow 0.16s;
+    animation: fade-up 0.4s ease both;
+    box-shadow: 4px 4px 0px var(--ink);
+  }
+  .truck-card:nth-child(1) { animation-delay: 0.07s; }
+  .truck-card:nth-child(2) { animation-delay: 0.14s; }
+  .truck-card:nth-child(3) { animation-delay: 0.21s; }
+  .truck-card:nth-child(4) { animation-delay: 0.28s; }
+  .truck-card:active { transform: translate(3px,3px); box-shadow: 1px 1px 0px var(--ink); }
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-img { width: 100%; height: 130px; position: relative; overflow: hidden; }
+  .card-img-bg {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 54px; position: relative;
+  }
+  .card-img-bg::before {
+    content: ''; position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
+    background-size: 8px 8px;
+  }
+  .card-img-bg::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(to bottom, transparent 50%, rgba(255,255,255,0.1) 100%);
+  }
+  .ci1 { background: #1a1a1a; }
+  .ci2 { background: #d42b2b; }
+  .ci3 { background: #1a1a1a; }
+  .ci4 { background: #d42b2b; }
+
+  .card-status {
+    position: absolute; top: 10px; left: 10px; z-index: 2;
+    background: white; border: 1px solid var(--border);
+    border-radius: 5px; padding: 3px 9px;
+    font-size: 10px; font-weight: 700;
+    display: flex; align-items: center; gap: 4px; color: var(--ink);
+  }
+  .card-status.open::before {
+    content: ''; width: 6px; height: 6px;
+    border-radius: 50%; background: #22c55e; flex-shrink: 0;
+  }
+  .card-wait {
+    position: absolute; top: 10px; right: 10px; z-index: 2;
+    background: var(--red); border-radius: 5px;
+    padding: 3px 9px; font-size: 10px; font-weight: 700; color: white;
+  }
+
+  .card-body { padding: 14px 15px; }
+  .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2px; }
+  .card-name {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700; font-size: 16px; color: var(--ink); line-height: 1.2;
+  }
+  .card-rating { font-size: 12px; font-weight: 700; color: var(--red); flex-shrink: 0; margin-left: 8px; }
+  .card-cat { font-size: 10px; color: var(--ink-light); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 11px; }
+
+  .card-items { display: flex; flex-direction: column; gap: 9px; border-top: 1.5px solid var(--border); padding-top: 11px; }
+  .item-row { display: flex; justify-content: space-between; align-items: center; }
+  .item-name { font-size: 12px; color: var(--ink-mid); }
+  .item-right { display: flex; align-items: center; gap: 9px; }
+  .item-price { font-size: 13px; font-weight: 700; color: var(--ink); }
+
+  .add-btn {
+    width: 28px; height: 28px; border-radius: 6px;
+    border: 1.5px solid var(--ink);
+    background: var(--red); color: white; font-size: 18px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: transform 0.1s, background 0.1s; flex-shrink: 0;
+  }
+  .add-btn:active { transform: scale(0.84); background: var(--red-dk); }
+  .add-btn.added { background: #16a34a; border-color: #16a34a; animation: pop 0.25s ease; }
+  @keyframes pop { 0%{transform:scale(1)} 50%{transform:scale(1.35)} 100%{transform:scale(1)} }
+
+  .view-btn {
+    display: block; width: 100%; margin-top: 13px; padding: 10px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--ink); background: transparent;
+    color: var(--ink); font-size: 12px; font-weight: 700;
+    letter-spacing: 0.8px; text-transform: uppercase;
+    cursor: pointer; text-align: center;
+    transition: background 0.13s, color 0.13s;
+  }
+  .view-btn:active { background: var(--ink); color: white; }
+
+  /* ─── VER TODOS BANNER ─── */
+  .see-all-banner {
+    margin: 16px 20px 0;
+    border: 1.5px solid var(--ink);
+    border-radius: var(--radius);
+    box-shadow: 4px 4px 0px var(--ink);
+    background: var(--bg-off);
+    padding: 16px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer; transition: transform 0.13s, box-shadow 0.13s;
+    animation: fade-up 0.4s ease 0.35s both;
+  }
+  .see-all-banner:active { transform: translate(3px,3px); box-shadow: 1px 1px 0 var(--ink); }
+
+  .see-all-left { display: flex; align-items: center; gap: 12px; }
+  .see-all-emojis { font-size: 22px; letter-spacing: -4px; }
+  .see-all-text-top { font-family: 'Bebas Neue', sans-serif; font-size: 17px; letter-spacing: 2px; color: var(--ink); }
+  .see-all-text-sub { font-size: 11px; color: var(--ink-light); margin-top: 1px; }
+
+  .see-all-arrow {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--ink); display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .see-all-arrow svg { width: 16px; height: 16px; fill: white; }
+
+  /* ─── DIVIDER ─── */
+  .divider { margin: 24px 20px 0; height: 1.5px; background: var(--border); }
+
+  /* ─── MAP ─── */
+  .map-section { margin: 22px 20px 0; }
+
+  .map-box {
+    background: var(--bg-off); border-radius: var(--radius); height: 185px;
+    border: 1.5px solid var(--ink); box-shadow: 4px 4px 0px var(--ink);
+    position: relative; overflow: hidden; cursor: pointer;
+  }
+  .map-box::before {
+    content: ''; position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,0,0,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,0.06) 1px, transparent 1px);
+    background-size: 26px 26px;
+  }
+
+  .map-pin {
+    position: absolute; display: flex; flex-direction: column;
+    align-items: center; gap: 3px; cursor: pointer; transition: transform 0.14s;
+  }
+  .map-pin:active { transform: scale(1.12); }
+  .pin-dot {
+    width: 34px; height: 34px;
+    border-radius: 50% 50% 50% 0; transform: rotate(-45deg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink);
+  }
+  .pin-dot > span { transform: rotate(45deg); }
+  .pin-label {
+    font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;
+    color: var(--ink); white-space: nowrap;
+    background: white; padding: 2px 6px; border-radius: 3px; border: 1px solid var(--ink);
+  }
+  .map-entry {
+    position: absolute; bottom: 12px; right: 12px;
+    background: var(--ink); color: white;
+    padding: 5px 11px; border-radius: 5px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase;
+  }
+
+  /* ─── BOTTOM NAV ─── */
+  .bottom-nav {
+    position: fixed; bottom: 0;
+    left: 50%; transform: translateX(-50%);
+    width: 390px;
+    background: white;
+    border-top: 2px solid var(--ink);
+    display: flex; align-items: stretch;
+    z-index: 300;
+    height: var(--nav-h);
+  }
+
+  .nav-item {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 4px; cursor: pointer; position: relative;
+    padding: 10px 4px 14px;
+    transition: background 0.12s;
+    border: none; background: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .nav-item:not(:last-child) { border-right: 1.5px solid var(--border); }
+  .nav-item:active { background: var(--bg-off); }
+
+  .nav-item.active { background: var(--bg-off); }
+  .nav-item.active .nav-icon svg { fill: var(--red); stroke: var(--red); }
+  .nav-item.active .nav-label { color: var(--red); }
+
+  .nav-icon { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
+  .nav-icon svg { width: 22px; height: 22px; fill: none; stroke: var(--ink-light); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transition: stroke 0.12s, fill 0.12s; }
+
+  .nav-item.active .nav-icon svg,
+  .nav-item.cart-nav .nav-icon svg { stroke: var(--ink-light); }
+
+  .nav-label { font-size: 10px; font-weight: 600; color: var(--ink-light); letter-spacing: 0.3px; transition: color 0.12s; }
+
+  /* Cart nav special */
+  .cart-nav { position: relative; }
+  .cart-nav .nav-icon {
+    width: 44px; height: 44px;
+    background: var(--red); border-radius: 50%;
+    border: 2px solid var(--ink);
+    box-shadow: 2px 2px 0 var(--ink);
+    margin-bottom: -4px;
+    margin-top: -16px;
+  }
+  .cart-nav .nav-icon svg { stroke: white; width: 20px; height: 20px; }
+  .cart-nav .nav-label { color: var(--ink-mid); font-weight: 700; }
+  .cart-nav:active .nav-icon { background: var(--red-dk); }
+
+  .cart-nav-badge {
+    position: absolute; top: 4px;
+    right: calc(50% - 26px);
+    background: var(--ink); color: white;
+    font-size: 9px; font-weight: 700;
+    border-radius: 50%; width: 16px; height: 16px;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 2;
+  }
+
+  /* Orders badge */
+  .nav-dot {
+    position: absolute; top: 10px; right: calc(50% - 18px);
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--red); border: 1.5px solid white;
+  }
+
+  .bottom-pad { height: calc(var(--nav-h) + 10px); }
+
+  /* ─── TOAST ─── */
+  .toast {
+    position: fixed; top: 80px; left: 50%; transform: translateX(-50%) translateY(-10px);
+    background: var(--ink); color: white;
+    padding: 10px 20px; border-radius: 8px;
+    font-size: 13px; font-weight: 600;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s, transform 0.2s;
+    z-index: 500; white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="logo">TU<span>KI</span></div>
+  <div class="header-actions">
+    <button class="profile-btn" onclick="navigate('profile')" title="Mi perfil">👤</button>
+    <button class="cart-btn" onclick="navigate('cart')">
+      <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/></svg>
+      <span class="cart-badge" id="cartBadge">3</span>
+    </button>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="event-hero">
+  <div class="hero-half"></div>
+  <div class="hero-stripe"></div>
+  <div class="hero-stamp"></div>
+  <div class="hero-stamp2"></div>
+  <div class="hero-content">
+    <div class="live-badge">En vivo ahora</div>
+    <div>
+      <div class="hero-title">Garage<br><em>Gourmet</em><br>Festival</div>
+    </div>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/></svg>
+        Av. Italia 2360
+      </div>
+      <div class="hero-meta-item">
+        <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20A10 10 0 0012 2zm0 18a8 8 0 110-16 8 8 0 010 16zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
+        18:00 – 00:00
+      </div>
+      <div class="hero-meta-item">
+        <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+        Hoy, Sáb 23
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ORDERS QUICK ACCESS -->
+<div class="orders-strip" onclick="navigate('orders')">
+  <div class="orders-strip-left">
+    <div class="orders-icon">
+      <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M9 12h6M9 16h4" stroke="white" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg>
+    </div>
+    <div>
+      <div class="orders-text-top">Tus pedidos</div>
+      <div class="orders-text-sub">● 1 en preparación</div>
+    </div>
+  </div>
+  <div class="orders-arrow">→</div>
+</div>
+
+<!-- CATEGORIES -->
+<div class="section-header">
+  <div class="section-title">Food Trucks</div>
+  <span class="section-cta" onclick="navigate('trucks')">Ver todos →</span>
+</div>
+
+<div class="cat-scroll">
+  <button class="cat-pill active" onclick="filterCat(this)">Todos</button>
+  <button class="cat-pill" onclick="filterCat(this)">🍔 Burgers</button>
+  <button class="cat-pill" onclick="filterCat(this)">🌮 Tacos</button>
+  <button class="cat-pill" onclick="filterCat(this)">🍕 Pizza</button>
+  <button class="cat-pill" onclick="filterCat(this)">🍜 Ramen</button>
+  <button class="cat-pill" onclick="filterCat(this)">🍺 Drinks</button>
+</div>
+
+<div class="trucks-scroll">
+
+  <div class="truck-card">
+    <div class="card-img">
+      <div class="card-img-bg ci1">🍔</div>
+      <div class="card-status open">Abierto</div>
+      <div class="card-wait">~8 min</div>
+    </div>
+    <div class="card-body">
+      <div class="card-top">
+        <div class="card-name">Brutal Burger</div>
+        <div class="card-rating">★ 4.8</div>
+      </div>
+      <div class="card-cat">Burgers · Americana</div>
+      <div class="card-items">
+        <div class="item-row">
+          <span class="item-name">Double Smash</span>
+          <div class="item-right">
+            <span class="item-price">$420</span>
+            <button class="add-btn" onclick="addItem(this, event)">+</button>
+          </div>
+        </div>
+        <div class="item-row">
+          <span class="item-name">Cheese Fries</span>
+          <div class="item-right">
+            <span class="item-price">$190</span>
+            <button class="add-btn" onclick="addItem(this, event)">+</button>
+          </div>
+        </div>
+      </div>
+      <button class="view-btn" onclick="navigate('truck')">Ver menú completo →</button>
+    </div>
+  </div>
+
+  <div class="truck-card">
+    <div class="card-img">
+      <div class="card-img-bg ci2">🌮</div>
+      <div class="card-status open">Abierto</div>
+      <div class="card-wait">~5 min</div>
+    </div>
+    <div class="card-body">
+      <div class="card-top">
+        <div class="card-name">El Taquero</div>
+        <div class="card-rating">★ 4.6</div>
+      </div>
+      <div class="card-cat">Tacos · Mexicana</div>
+      <div class="card-items">
+        <div class="item-row">
+          <span class="item-name">Taco Al Pastor</span>
+          <div class="item-right">
+            <span class="item-price">$180</span>
+            <button class="add-btn" onclick="addItem(this, event)">+</button>
+          </div>
+        </div>
+        <div class="item-row">
+          <span class="item-name">Quesadilla Mixta</span>
+          <div class="item-right">
+            <span class="item-price">$320</span>
+            <button class="add-btn" onclick="addItem(this, event)">+</button>
+          </div>
+        </div>
+      </div>
+      <button class="view-btn" onclick="navigate('truck')">Ver menú completo →</button>
+    </div>
+  </div>
+
+  <div class="truck-card">
+    <div class="card-img">
+      <div class="card-img-bg ci3">🍕</div>
+      <div class="card-status open">Abierto</div>
+      <div class="card-wait">~12 min</div>
+    </div>
+    <div class="card-body">
+      <div class="card-top">
+        <div class="card-name">La Fornace</div>
+        <div class="card-rating">★ 4.9</div>
+      </div>
+      <div class="card-cat">Pizza · Napolitana</div>
+      <div class="card-items">
+        <div class="item-row">
+          <span class="item-name">Margherita DOC</span>
+          <div class="item-right">
+            <span class="item-price">$480</span>
+            <button class="add-btn" onclick="addItem(this, event)">+</button>
+          </div>
+        </div>
+        <div class="item-row">
+          <span class="item-name">Burrata + Rúcula</span>
+          <div class="item-right">
+            <span class="item-price">$550</span>
+            <button class="add-btn" onclick="addItem(this, event)">+</button>
+          </div>
+        </div>
+      </div>
+      <button class="view-btn" onclick="navigate('truck')">Ver menú completo →</button>
+    </div>
+  </div>
+
+  <div class="truck-card">
+    <div class="card-img">
+      <div class="card-img-bg ci4">🍜</div>
+      <div class="card-status open">Abierto</div>
+      <div class="card-wait">~15 min</div>
+    </div>
+    <div class="card-body">
+      <div class="card-top">
+        <div class="card-name">Noodle Gang</div>
+        <div class="card-rating">★ 4.7</div>
+      </div>
+      <div class="card-cat">Ramen · Asiática</div>
+      <div class="card-items">
+        <div class="item-row">
+          <span class="item-name">Tonkotsu Ramen</span>
+          <div class="item-right">
+            <span class="item-price">$520</span>
+            <button class="add-btn" onclick="addItem(this, event)">+</button>
+          </div>
+        </div>
+        <div class="item-row">
+          <span class="item-name">Gyozas x6</span>
+          <div class="item-right">
+            <span class="item-price">$280</span>
+            <button class="add-btn" onclick="addItem(this, event)">+</button>
+          </div>
+        </div>
+      </div>
+      <button class="view-btn" onclick="navigate('truck')">Ver menú completo →</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- VER TODOS LOS FOOD TRUCKS BANNER -->
+<div class="see-all-banner" onclick="navigate('trucks')">
+  <div class="see-all-left">
+    <div class="see-all-emojis">🍔🌮🍕</div>
+    <div>
+      <div class="see-all-text-top">Ver catálogo completo</div>
+      <div class="see-all-text-sub">8 food trucks disponibles hoy</div>
+    </div>
+  </div>
+  <div class="see-all-arrow">
+    <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- MAP -->
+<div class="map-section">
+  <div class="section-header" style="padding:0; margin-bottom:14px;">
+    <div class="section-title">Mapa del evento</div>
+    <span class="section-cta" onclick="navigate('map')">Ver completo →</span>
+  </div>
+  <div class="map-box" onclick="navigate('map')">
+    <div class="map-pin" style="top:30%; left:18%">
+      <div class="pin-dot" style="background:#d42b2b"><span>🍔</span></div>
+      <div class="pin-label">Brutal</div>
+    </div>
+    <div class="map-pin" style="top:50%; left:50%">
+      <div class="pin-dot" style="background:#f0f0f0"><span>🌮</span></div>
+      <div class="pin-label">Taquero</div>
+    </div>
+    <div class="map-pin" style="top:16%; left:60%">
+      <div class="pin-dot" style="background:#d42b2b"><span>🍕</span></div>
+      <div class="pin-label">Fornace</div>
+    </div>
+    <div class="map-pin" style="top:58%; left:20%">
+      <div class="pin-dot" style="background:#f0f0f0"><span>🍜</span></div>
+      <div class="pin-label">Noodle</div>
+    </div>
+    <div class="map-entry">📍 Entrada principal</div>
+  </div>
+</div>
+
+<div class="bottom-pad"></div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+
+  <!-- Inicio (active) -->
+  <button class="nav-item active" onclick="setNav(this, 'home')">
+    <div class="nav-icon">
+      <svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H5a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
+    </div>
+    <span class="nav-label">Inicio</span>
+  </button>
+
+  <!-- Pedidos -->
+  <button class="nav-item" onclick="setNav(this, 'orders')">
+    <div class="nav-dot"></div>
+    <div class="nav-icon">
+      <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>
+    </div>
+    <span class="nav-label">Pedidos</span>
+  </button>
+
+  <!-- Carrito (centro destacado) -->
+  <button class="nav-item cart-nav" onclick="setNav(this, 'cart')">
+    <span class="cart-nav-badge" id="navCartBadge">3</span>
+    <div class="nav-icon">
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="21" r="1" fill="white" stroke="none"/><circle cx="20" cy="21" r="1" fill="white" stroke="none"/><path d="M1 1h4l2.68 13.39a2 2 0 001.99 1.61h9.72a2 2 0 001.98-1.61L23 6H6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <span class="nav-label">Carrito</span>
+  </button>
+
+  <!-- Trucks -->
+  <button class="nav-item" onclick="setNav(this, 'trucks')">
+    <div class="nav-icon">
+      <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+    </div>
+    <span class="nav-label">Trucks</span>
+  </button>
+
+  <!-- Perfil -->
+  <button class="nav-item" onclick="setNav(this, 'profile')">
+    <div class="nav-icon">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    </div>
+    <span class="nav-label">Perfil</span>
+  </button>
+
+</nav>
+
+<script>
+  let count = 3, total = 790;
+
+  const toastMsgs = {
+    cart:    '🛒 Carrito',
+    orders:  '📋 Pedidos',
+    trucks:  '🚚 Catálogo de Trucks',
+    profile: '👤 Mi Perfil',
+    map:     '🗺️ Mapa del evento',
+    truck:   '🍔 Página del Food Truck',
+    home:    null,
+  };
+
+  function navigate(dest) {
+    const msg = toastMsgs[dest];
+    if (!msg) return;
+    showToast(msg + ' → próximamente');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('show'), 2000);
+  }
+
+  function setNav(btn, dest) {
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    btn.classList.add('active');
+    navigate(dest);
+  }
+
+  function addItem(btn, e) {
+    e.stopPropagation();
+    const price = parseInt(btn.closest('.item-right').previousElementSibling.textContent.replace(/\D/g,'')) || 200;
+    btn.classList.add('added'); btn.textContent = '✓';
+    setTimeout(() => { btn.classList.remove('added'); btn.textContent = '+'; }, 650);
+    count++; total += price;
+    document.getElementById('cartBadge').textContent = count;
+    document.getElementById('navCartBadge').textContent = count;
+  }
+
+  function filterCat(btn) {
+    document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+  }
+</script>
+</body>
+</html>

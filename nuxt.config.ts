@@ -1,29 +1,32 @@
-import tailwindcss from '@tailwindcss/vite'
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineNuxtConfig({
   future: { compatibilityVersion: 4 },
 
-  modules: ['@nuxtjs/supabase', '@nuxt/image', '@nuxt/fonts'],
+  modules: ["@nuxtjs/supabase", "@nuxt/image", "@nuxt/fonts"],
 
-  components: [{ path: '~/components', pathPrefix: false }],
+  components: [{ path: "~/components", pathPrefix: false }],
 
   supabase: {
     redirectOptions: {
-      login: '/login',
-      callback: '/confirm',
-      exclude: ['/register', '/forgot-password', '/reset-password'],
+      login: "/login",
+      callback: "/confirm",
+      exclude: ["/register", "/forgot-password", "/reset-password"],
     },
   },
 
-  css: ['~/assets/css/main.css'],
+  css: ["~/assets/css/main.css"],
 
   vite: {
     plugins: [tailwindcss()],
+    server: {
+      allowedHosts: ["gasoline-otherwise-legends-condos.trycloudflare.com"],
+    },
   },
 
   image: {
     // @nuxt/image: optimize remote images (Supabase Storage + picsum)
-    domains: ['picsum.photos'],
+    domains: ["picsum.photos"],
   },
 
   fonts: {
@@ -40,9 +43,9 @@ export default defineNuxtConfig({
     mpWebhookSecret: process.env.MP_WEBHOOK_SECRET,
     // Public (exposed to client)
     public: {
-      appUrl: process.env.NUXT_PUBLIC_APP_URL ?? 'http://localhost:3000',
+      appUrl: process.env.NUXT_PUBLIC_APP_URL ?? "http://localhost:3000",
     },
   },
 
   devtools: { enabled: true },
-})
+});

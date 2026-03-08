@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Tuki – Mis Pedidos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#f8f8f8;color:#111;font-family:'DM Sans',sans-serif;max-width:390px;margin:0 auto;overflow-x:hidden;padding-bottom:80px;}
+
+  /* ─── HEADER ─── */
+  .header{
+    background:#fff;border-bottom:2px solid #111;
+    padding:13px 20px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .header-left{display:flex;align-items:center;gap:12px;}
+  .back-btn{
+    width:34px;height:34px;border-radius:50%;
+    background:#f8f8f8;border:1.5px solid #111;
+    display:flex;align-items:center;justify-content:center;
+    font-size:15px;font-weight:700;color:#111;cursor:pointer;
+    transition:background 0.12s;
+  }
+  .back-btn:active{background:#e8e8e8;}
+  .header-title{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:26px;letter-spacing:3px;color:#111;line-height:1;
+  }
+  .header-event{
+    font-size:10px;color:#888;text-transform:uppercase;
+    letter-spacing:1.2px;margin-top:1px;
+  }
+
+  /* ─── TABS ─── */
+  .tabs-wrap{
+    background:#fff;
+    border-bottom:2px solid #111;
+    position:sticky;top:0;z-index:50;
+  }
+  .tabs{display:flex;}
+  .tab{
+    flex:1;padding:14px;
+    font-size:12px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;
+    color:#888;text-align:center;cursor:pointer;
+    border-bottom:2.5px solid transparent;margin-bottom:-2px;
+    transition:color 0.13s,border-color 0.13s;
+    position:relative;
+  }
+  .tab.active{color:#d42b2b;border-bottom-color:#d42b2b;}
+  .tab-badge{
+    display:inline-flex;align-items:center;justify-content:center;
+    background:#d42b2b;color:white;
+    font-size:9px;font-weight:700;
+    border-radius:50%;width:16px;height:16px;
+    margin-left:5px;vertical-align:middle;
+  }
+
+  /* ─── PANEL ─── */
+  .panel{display:none;padding:16px 20px;}
+  .panel.active{display:block;}
+
+  /* ─── ACTIVE ORDER CARD ─── */
+  .order-card{
+    background:#fff;
+    border:1.5px solid #111;
+    border-radius:14px;
+    box-shadow:4px 4px 0 #111;
+    overflow:hidden;
+    margin-bottom:16px;
+    animation:fade-up 0.35s ease both;
+  }
+  @keyframes fade-up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+  .order-card:nth-child(1){animation-delay:0.05s;}
+  .order-card:nth-child(2){animation-delay:0.12s;}
+
+  /* Card header */
+  .card-head{
+    padding:14px 16px 12px;
+    border-bottom:1.5px solid #e8e8e8;
+    display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+  }
+  .card-head-left{}
+  .truck-name-sm{
+    font-family:'Playfair Display',serif;
+    font-weight:700;font-size:17px;color:#111;line-height:1.1;
+    margin-bottom:3px;
+  }
+  .order-meta{
+    font-size:11px;color:#888;display:flex;align-items:center;gap:8px;
+  }
+  .order-num{font-weight:600;color:#444;}
+
+  /* Status badge */
+  .status-badge{
+    display:inline-flex;align-items:center;gap:5px;
+    padding:5px 11px;border-radius:6px;
+    font-size:10px;font-weight:700;letter-spacing:0.5px;
+    flex-shrink:0;white-space:nowrap;
+  }
+  .status-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+
+  .status-prep{background:#fff7ed;color:#c2410c;}
+  .status-prep .status-dot{background:#f97316;animation:pulse 1.4s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.8)}}
+
+  .status-ready{background:#f0fdf4;color:#15803d;}
+  .status-ready .status-dot{background:#22c55e;}
+
+  /* Progress bar */
+  .progress-wrap{padding:14px 16px 10px;}
+  .progress-label{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-bottom:8px;
+  }
+  .progress-step{font-size:11px;font-weight:600;color:#111;}
+  .progress-eta{
+    font-size:11px;color:#888;
+  }
+  .progress-eta span{color:#d42b2b;font-weight:700;}
+
+  .progress-track{
+    height:6px;background:#e8e8e8;border-radius:3px;
+    overflow:hidden;margin-bottom:12px;
+  }
+  .progress-fill{
+    height:100%;background:#d42b2b;border-radius:3px;
+    transition:width 0.6s ease;
+  }
+
+  .progress-steps{
+    display:flex;justify-content:space-between;align-items:flex-start;
+  }
+  .prog-step{
+    display:flex;flex-direction:column;align-items:center;gap:4px;
+    flex:1;
+  }
+  .prog-dot{
+    width:20px;height:20px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:10px;border:2px solid #e8e8e8;background:#fff;
+    transition:all 0.3s;
+  }
+  .prog-dot.done{background:#111;border-color:#111;color:white;}
+  .prog-dot.active{background:#d42b2b;border-color:#d42b2b;color:white;}
+  .prog-dot.pending{background:#fff;border-color:#e8e8e8;color:#ccc;}
+  .prog-label{font-size:9px;color:#888;text-align:center;letter-spacing:0.3px;line-height:1.3;}
+  .prog-label.done{color:#111;font-weight:600;}
+  .prog-label.active{color:#d42b2b;font-weight:700;}
+
+  /* connector line */
+  .prog-line{
+    flex:1;height:2px;margin-top:9px;
+    background:#e8e8e8;
+  }
+  .prog-line.done{background:#111;}
+
+  /* Items list */
+  .card-items{padding:0 16px 4px;border-top:1.5px solid #e8e8e8;}
+  .card-item{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:10px 0;border-bottom:1px solid #f0f0f0;
+    font-size:13px;
+  }
+  .card-item:last-child{border-bottom:none;}
+  .item-qty{
+    background:#111;color:white;
+    width:20px;height:20px;border-radius:5px;
+    font-size:10px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;margin-right:8px;
+  }
+  .item-left{display:flex;align-items:center;}
+  .item-nm{color:#444;font-weight:500;}
+  .item-pr{font-weight:700;color:#111;}
+
+  /* Card footer */
+  .card-foot{
+    padding:12px 16px;
+    border-top:1.5px solid #e8e8e8;
+    display:flex;align-items:center;justify-content:space-between;
+    background:#f8f8f8;
+  }
+  .card-total-label{font-size:11px;color:#888;text-transform:uppercase;letter-spacing:0.8px;}
+  .card-total-val{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:22px;letter-spacing:1px;color:#111;
+  }
+  .pickup-info{
+    font-size:11px;color:#888;
+    display:flex;align-items:center;gap:4px;
+  }
+  .pickup-info strong{color:#111;}
+
+  /* ─── READY CARD (special highlight) ─── */
+  .order-card.ready{
+    border-color:#22c55e;
+    box-shadow:4px 4px 0 #22c55e;
+  }
+  .ready-banner{
+    background:#22c55e;
+    padding:10px 16px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .ready-banner-icon{font-size:20px;}
+  .ready-banner-text{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:18px;letter-spacing:2px;color:white;
+  }
+  .ready-banner-sub{font-size:11px;color:rgba(255,255,255,0.85);}
+
+  /* ─── QR CTA ─── */
+  .card-qr-cta{
+    background:#111;
+    padding:13px 16px;
+    display:flex;align-items:center;justify-content:space-between;
+    cursor:pointer;
+    transition:background 0.12s;
+  }
+  .card-qr-cta:active{background:#222;}
+  .qr-cta-left{display:flex;align-items:center;gap:12px;}
+  .qr-icon-sm{
+    width:36px;height:36px;border-radius:8px;
+    background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  .qr-cta-title{font-size:13px;font-weight:700;color:white;margin-bottom:1px;}
+  .qr-cta-sub{font-size:10px;color:rgba(255,255,255,0.55);}
+  .qr-cta-arrow{font-size:18px;color:#d42b2b;font-weight:700;}
+
+  /* ─── QR MODAL ─── */
+  .modal-overlay{
+    position:fixed;inset:0;
+    background:rgba(0,0,0,0.72);
+    z-index:400;
+    display:flex;align-items:flex-end;justify-content:center;
+    opacity:0;pointer-events:none;
+    transition:opacity 0.22s;
+  }
+  .modal-overlay.show{opacity:1;pointer-events:all;}
+
+  .modal-sheet{
+    background:#fff;
+    width:390px;
+    border-radius:20px 20px 0 0;
+    border-top:2px solid #111;
+    padding:0 0 40px;
+    transform:translateY(100%);
+    transition:transform 0.28s cubic-bezier(0.34,1.2,0.64,1);
+    max-height:92vh;overflow-y:auto;
+  }
+  .modal-overlay.show .modal-sheet{transform:translateY(0);}
+
+  .modal-handle{
+    width:40px;height:4px;border-radius:2px;
+    background:#e8e8e8;margin:12px auto 0;
+  }
+
+  .modal-head{
+    padding:18px 20px 14px;
+    border-bottom:1.5px solid #e8e8e8;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .modal-title{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:24px;letter-spacing:2.5px;color:#111;
+  }
+  .modal-close{
+    width:32px;height:32px;border-radius:50%;
+    background:#f8f8f8;border:1.5px solid #e8e8e8;
+    display:flex;align-items:center;justify-content:center;
+    font-size:16px;cursor:pointer;color:#888;
+    transition:background 0.12s;
+  }
+  .modal-close:active{background:#e8e8e8;}
+
+  .qr-section{
+    padding:24px 20px 20px;
+    display:flex;flex-direction:column;align-items:center;
+    text-align:center;
+  }
+
+  .qr-frame{
+    width:210px;height:210px;
+    border:3px solid #111;border-radius:16px;
+    box-shadow:5px 5px 0 #111;
+    padding:16px;
+    background:#fff;
+    display:flex;align-items:center;justify-content:center;
+    margin-bottom:18px;
+    position:relative;
+  }
+  /* Corner decorations */
+  .qr-frame::before,.qr-frame::after{
+    content:'';position:absolute;
+    width:20px;height:20px;border-color:#d42b2b;border-style:solid;
+  }
+  .qr-frame::before{top:-3px;left:-3px;border-width:4px 0 0 4px;border-radius:16px 0 0 0;}
+  .qr-frame::after{bottom:-3px;right:-3px;border-width:0 4px 4px 0;border-radius:0 0 16px 0;}
+
+  /* Actual QR pattern using CSS grid */
+  .qr-pattern{
+    width:178px;height:178px;
+    display:grid;
+    grid-template-columns:repeat(21,1fr);
+    grid-template-rows:repeat(21,1fr);
+    gap:1px;
+  }
+  .qr-cell{background:#f8f8f8;border-radius:1px;}
+  .qr-cell.b{background:#111;}
+
+  .qr-order-info{margin-bottom:6px;}
+  .qr-order-num{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:28px;letter-spacing:3px;color:#111;
+  }
+  .qr-order-sub{font-size:12px;color:#888;margin-top:2px;}
+
+  .qr-truck-badge{
+    display:inline-flex;align-items:center;gap:6px;
+    background:#f8f8f8;border:1.5px solid #e8e8e8;
+    border-radius:8px;padding:7px 14px;
+    margin-top:10px;
+  }
+  .qr-truck-badge-emoji{font-size:16px;}
+  .qr-truck-badge-name{font-size:13px;font-weight:700;color:#111;}
+  .qr-truck-badge-stand{font-size:11px;color:#888;margin-left:2px;}
+
+  .qr-instructions{
+    margin:16px 20px 0;
+    background:#fff8f8;border:1.5px solid #d42b2b;
+    border-radius:10px;padding:12px 14px;
+    display:flex;align-items:flex-start;gap:10px;
+  }
+  .qr-instr-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
+  .qr-instr-text{font-size:12px;color:#444;line-height:1.5;}
+  .qr-instr-text strong{color:#d42b2b;}
+
+  /* ─── EMPTY STATE ─── */
+  .empty-state{
+    text-align:center;padding:48px 24px;
+  }
+  .empty-icon{font-size:52px;margin-bottom:14px;opacity:0.4;}
+  .empty-title{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:22px;letter-spacing:2px;color:#888;margin-bottom:6px;
+  }
+  .empty-sub{font-size:13px;color:#aaa;line-height:1.5;}
+
+  /* ─── HISTORY CARD ─── */
+  .history-card{
+    background:#fff;
+    border:1.5px solid #e8e8e8;
+    border-radius:12px;
+    padding:14px 16px;
+    margin-bottom:10px;
+    display:flex;align-items:center;gap:14px;
+    animation:fade-up 0.3s ease both;
+    cursor:pointer;
+    transition:border-color 0.13s;
+  }
+  .history-card:active{border-color:#111;}
+  .history-card:nth-child(1){animation-delay:0.05s;}
+  .history-card:nth-child(2){animation-delay:0.10s;}
+  .history-card:nth-child(3){animation-delay:0.15s;}
+
+  .hist-emoji{
+    width:44px;height:44px;border-radius:10px;
+    background:#f8f8f8;border:1.5px solid #e8e8e8;
+    display:flex;align-items:center;justify-content:center;
+    font-size:22px;flex-shrink:0;
+  }
+  .hist-info{flex:1;min-width:0;}
+  .hist-truck{
+    font-family:'Playfair Display',serif;
+    font-size:14px;font-weight:700;color:#111;margin-bottom:2px;
+  }
+  .hist-meta{font-size:11px;color:#888;}
+  .hist-right{text-align:right;flex-shrink:0;}
+  .hist-total{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:18px;letter-spacing:1px;color:#111;
+  }
+  .hist-status{
+    display:inline-block;
+    font-size:9px;font-weight:700;text-transform:uppercase;
+    letter-spacing:0.5px;margin-top:3px;
+    padding:2px 7px;border-radius:4px;
+  }
+  .hist-completed{background:#f0fdf4;color:#15803d;}
+
+  /* ─── SECTION DATE LABEL ─── */
+  .date-label{
+    font-size:11px;font-weight:700;color:#888;
+    text-transform:uppercase;letter-spacing:1.2px;
+    margin:16px 0 8px;
+  }
+  .date-label:first-child{margin-top:0;}
+
+  /* ─── BOTTOM NAV ─── */
+  .bottom-nav{
+    position:fixed;bottom:0;
+    left:50%;transform:translateX(-50%);
+    width:390px;background:white;
+    border-top:2px solid #111;
+    display:flex;align-items:stretch;
+    z-index:300;height:68px;
+  }
+  .nav-item{
+    flex:1;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+    gap:4px;position:relative;
+    padding:10px 4px 14px;
+    border:none;background:none;cursor:pointer;
+  }
+  .nav-item:not(:last-child){border-right:1.5px solid #e8e8e8;}
+  .nav-item.active{background:#f8f8f8;}
+  .nav-icon{width:24px;height:24px;display:flex;align-items:center;justify-content:center;}
+  .nav-icon svg{width:22px;height:22px;fill:none;stroke:#888;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+  .nav-item.active .nav-icon svg{stroke:#d42b2b;}
+  .nav-label{font-size:10px;font-weight:600;color:#888;letter-spacing:0.3px;}
+  .nav-item.active .nav-label{color:#d42b2b;}
+  .cart-nav .nav-icon{width:44px;height:44px;background:#d42b2b;border-radius:50%;border:2px solid #111;box-shadow:2px 2px 0 #111;margin-bottom:-4px;margin-top:-16px;}
+  .cart-nav .nav-icon svg{stroke:white;width:20px;height:20px;}
+  .cart-nav .nav-label{color:#444;font-weight:700;}
+  .cart-nav-badge{position:absolute;top:4px;right:calc(50% - 26px);background:#111;color:white;font-size:9px;font-weight:700;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;z-index:2;}
+  .nav-dot{position:absolute;top:10px;right:calc(50% - 18px);width:7px;height:7px;border-radius:50%;background:#d42b2b;border:1.5px solid white;}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <div class="back-btn" onclick="showToast('← Volver al evento')">←</div>
+    <div>
+      <div class="header-title">Mis Pedidos</div>
+      <div class="header-event">Garage Gourmet Festival</div>
+    </div>
+  </div>
+</header>
+
+<!-- TABS -->
+<div class="tabs-wrap">
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('activos', this)">
+      Activos <span class="tab-badge">2</span>
+    </div>
+    <div class="tab" onclick="switchTab('historial', this)">Historial</div>
+  </div>
+</div>
+
+<!-- PANEL ACTIVOS -->
+<div class="panel active" id="panel-activos">
+
+  <!-- PEDIDO LISTO -->
+  <div class="order-card ready">
+    <div class="ready-banner">
+      <div class="ready-banner-icon">🎉</div>
+      <div>
+        <div class="ready-banner-text">¡Tu pedido está listo!</div>
+        <div class="ready-banner-sub">Pasá a retirar en el stand B3</div>
+      </div>
+    </div>
+    <div class="card-head">
+      <div class="card-head-left">
+        <div class="truck-name-sm">Brutal Burger</div>
+        <div class="order-meta">
+          <span class="order-num">#A-041</span>
+          <span>·</span>
+          <span>Hace 18 min</span>
+        </div>
+      </div>
+      <div class="status-badge status-ready">
+        <span class="status-dot"></span>
+        Listo
+      </div>
+    </div>
+    <div class="card-items">
+      <div class="card-item">
+        <div class="item-left"><div class="item-qty">1</div><div class="item-nm">Double Smash</div></div>
+        <div class="item-pr">$420</div>
+      </div>
+      <div class="card-item">
+        <div class="item-left"><div class="item-qty">1</div><div class="item-nm">Cheese Fries</div></div>
+        <div class="item-pr">$190</div>
+      </div>
+      <div class="card-item">
+        <div class="item-left"><div class="item-qty">1</div><div class="item-nm">Coca-Cola</div></div>
+        <div class="item-pr">$120</div>
+      </div>
+    </div>
+    <div class="card-foot">
+      <div class="pickup-info">📍 <strong>Stand B3</strong> · Zona Norte</div>
+      <div>
+        <div class="card-total-label">Total</div>
+        <div class="card-total-val">$730</div>
+      </div>
+    </div>
+    <div class="card-qr-cta" onclick="openQR()">
+      <div class="qr-cta-left">
+        <div class="qr-icon-sm">
+          <svg viewBox="0 0 24 24" fill="none" width="18" height="18">
+            <rect x="3" y="3" width="7" height="7" rx="1" stroke="white" stroke-width="1.8"/>
+            <rect x="14" y="3" width="7" height="7" rx="1" stroke="white" stroke-width="1.8"/>
+            <rect x="3" y="14" width="7" height="7" rx="1" stroke="white" stroke-width="1.8"/>
+            <rect x="5" y="5" width="3" height="3" fill="white"/>
+            <rect x="16" y="5" width="3" height="3" fill="white"/>
+            <rect x="5" y="16" width="3" height="3" fill="white"/>
+            <path d="M14 14h2v2h-2zM18 14h3v2h-3zM14 18h2v3h-2zM18 18h3v3h-3z" fill="white"/>
+          </svg>
+        </div>
+        <div>
+          <div class="qr-cta-title">Mostrar QR al retiro</div>
+          <div class="qr-cta-sub">Presentá el código en el stand</div>
+        </div>
+      </div>
+      <div class="qr-cta-arrow">→</div>
+    </div>
+  </div>
+
+  <!-- PEDIDO EN PREPARACIÓN -->
+  <div class="order-card">
+    <div class="card-head">
+      <div class="card-head-left">
+        <div class="truck-name-sm">El Taquero</div>
+        <div class="order-meta">
+          <span class="order-num">#A-047</span>
+          <span>·</span>
+          <span>Hace 4 min</span>
+        </div>
+      </div>
+      <div class="status-badge status-prep">
+        <span class="status-dot"></span>
+        En preparación
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <div class="progress-step">Preparando tu pedido</div>
+        <div class="progress-eta">Listo en <span>~8 min</span></div>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" style="width:45%"></div>
+      </div>
+      <div class="progress-steps">
+        <div class="prog-step">
+          <div class="prog-dot done">✓</div>
+          <div class="prog-label done">Recibido</div>
+        </div>
+        <div class="prog-line done"></div>
+        <div class="prog-step">
+          <div class="prog-dot active">🔥</div>
+          <div class="prog-label active">Preparando</div>
+        </div>
+        <div class="prog-line"></div>
+        <div class="prog-step">
+          <div class="prog-dot pending">—</div>
+          <div class="prog-label">Listo</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-items">
+      <div class="card-item">
+        <div class="item-left"><div class="item-qty">2</div><div class="item-nm">Taco Al Pastor</div></div>
+        <div class="item-pr">$360</div>
+      </div>
+      <div class="card-item">
+        <div class="item-left"><div class="item-qty">1</div><div class="item-nm">Quesadilla Mixta</div></div>
+        <div class="item-pr">$320</div>
+      </div>
+    </div>
+    <div class="card-foot">
+      <div class="pickup-info">📍 <strong>Stand A1</strong> · Zona Sur</div>
+      <div>
+        <div class="card-total-label">Total</div>
+        <div class="card-total-val">$680</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- PANEL HISTORIAL -->
+<div class="panel" id="panel-historial">
+
+  <div class="date-label">Hoy</div>
+
+  <div class="history-card">
+    <div class="hist-emoji">🍕</div>
+    <div class="hist-info">
+      <div class="hist-truck">La Fornace</div>
+      <div class="hist-meta">#A-033 · 3 items · 19:42</div>
+    </div>
+    <div class="hist-right">
+      <div class="hist-total">$1.030</div>
+      <div class="hist-status hist-completed">Completado</div>
+    </div>
+  </div>
+
+  <div class="history-card">
+    <div class="hist-emoji">🍜</div>
+    <div class="hist-info">
+      <div class="hist-truck">Noodle Gang</div>
+      <div class="hist-meta">#A-021 · 2 items · 18:55</div>
+    </div>
+    <div class="hist-right">
+      <div class="hist-total">$800</div>
+      <div class="hist-status hist-completed">Completado</div>
+    </div>
+  </div>
+
+  <div class="date-label">Eventos anteriores</div>
+
+  <div class="history-card">
+    <div class="hist-emoji">🍔</div>
+    <div class="hist-info">
+      <div class="hist-truck">Brutal Burger</div>
+      <div class="hist-meta">#B-089 · 4 items · 15 Feb</div>
+    </div>
+    <div class="hist-right">
+      <div class="hist-total">$1.490</div>
+      <div class="hist-status hist-completed">Completado</div>
+    </div>
+  </div>
+
+  <div class="history-card">
+    <div class="hist-emoji">🌮</div>
+    <div class="hist-info">
+      <div class="hist-truck">El Taquero</div>
+      <div class="hist-meta">#B-071 · 3 items · 15 Feb</div>
+    </div>
+    <div class="hist-right">
+      <div class="hist-total">$920</div>
+      <div class="hist-status hist-completed">Completado</div>
+    </div>
+  </div>
+
+  <div class="history-card">
+    <div class="hist-emoji">🍕</div>
+    <div class="hist-info">
+      <div class="hist-truck">La Fornace</div>
+      <div class="hist-meta">#A-112 · 2 items · 2 Feb</div>
+    </div>
+    <div class="hist-right">
+      <div class="hist-total">$960</div>
+      <div class="hist-status hist-completed">Completado</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-item" onclick="showToast('🏠 Inicio')">
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H5a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg></div>
+    <span class="nav-label">Inicio</span>
+  </button>
+  <button class="nav-item active">
+    <div class="nav-dot" style="display:none"></div>
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg></div>
+    <span class="nav-label">Pedidos</span>
+  </button>
+  <button class="nav-item cart-nav" onclick="showToast('🛒 Carrito')">
+    <span class="cart-nav-badge">3</span>
+    <div class="nav-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="21" r="1" fill="white" stroke="none"/><circle cx="20" cy="21" r="1" fill="white" stroke="none"/><path d="M1 1h4l2.68 13.39a2 2 0 001.99 1.61h9.72a2 2 0 001.98-1.61L23 6H6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <span class="nav-label">Carrito</span>
+  </button>
+  <button class="nav-item" onclick="showToast('🚚 Trucks')">
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+    <span class="nav-label">Trucks</span>
+  </button>
+  <button class="nav-item" onclick="showToast('👤 Perfil')">
+    <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+    <span class="nav-label">Perfil</span>
+  </button>
+</nav>
+
+<!-- QR MODAL -->
+<div class="modal-overlay" id="qrModal" onclick="handleOverlayClick(event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-head">
+      <div class="modal-title">Código de retiro</div>
+      <div class="modal-close" onclick="closeQR()">✕</div>
+    </div>
+    <div class="qr-section">
+      <div class="qr-frame">
+        <div class="qr-pattern" id="qrPattern"></div>
+      </div>
+      <div class="qr-order-info">
+        <div class="qr-order-num">#A-041</div>
+        <div class="qr-order-sub">Mostrá este código al retirar tu pedido</div>
+      </div>
+      <div class="qr-truck-badge">
+        <span class="qr-truck-badge-emoji">🍔</span>
+        <span class="qr-truck-badge-name">Brutal Burger</span>
+        <span class="qr-truck-badge-stand">· Stand B3</span>
+      </div>
+    </div>
+    <div class="qr-instructions">
+      <div class="qr-instr-icon">📱</div>
+      <div class="qr-instr-text"><strong>Presentá la pantalla</strong> o dejá que el staff escanee el código QR al momento del retiro. No hace falta imprimir nada.</div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" style="position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-8px);background:#111;color:white;padding:9px 18px;border-radius:8px;font-size:12px;font-weight:600;opacity:0;pointer-events:none;transition:opacity 0.18s,transform 0.18s;z-index:500;white-space:nowrap;font-family:'DM Sans',sans-serif;"></div>
+
+<script>
+  function switchTab(id, el) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('panel-' + id).classList.add('active');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.opacity = '1';
+    t.style.transform = 'translateX(-50%) translateY(0)';
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => {
+      t.style.opacity = '0';
+      t.style.transform = 'translateX(-50%) translateY(-8px)';
+    }, 1800);
+  }
+
+  function openQR() {
+    document.getElementById('qrModal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeQR() {
+    document.getElementById('qrModal').classList.remove('show');
+    document.body.style.overflow = '';
+  }
+
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('qrModal')) closeQR();
+  }
+
+  // Generate a QR-like pattern (decorative, not real QR)
+  function buildQR() {
+    const grid = document.getElementById('qrPattern');
+    const size = 21;
+    // Finder patterns + data cells
+    const fixed = new Set();
+    // Top-left finder
+    for(let r=0;r<7;r++) for(let c=0;c<7;c++) fixed.add(r*size+c);
+    // Top-right finder
+    for(let r=0;r<7;r++) for(let c=14;c<21;c++) fixed.add(r*size+c);
+    // Bottom-left finder
+    for(let r=14;r<21;r++) for(let c=0;c<7;c++) fixed.add(r*size+c);
+
+    // Finder ring fill (white inside)
+    const white = new Set();
+    for(let r=1;r<6;r++) for(let c=1;c<6;c++) white.add(r*size+c);
+    for(let r=1;r<6;r++) for(let c=15;c<20;c++) white.add(r*size+c);
+    for(let r=15;r<20;r++) for(let c=1;c<6;c++) white.add(r*size+c);
+
+    // Inner dots
+    const inner = new Set();
+    for(let r=2;r<5;r++) for(let c=2;c<5;c++) inner.add(r*size+c);
+    for(let r=2;r<5;r++) for(let c=16;c<19;c++) inner.add(r*size+c);
+    for(let r=16;r<19;r++) for(let c=2;c<5;c++) inner.add(r*size+c);
+
+    // Timing patterns
+    for(let i=8;i<13;i++) {
+      if(i%2===0){fixed.add(6*size+i);fixed.add(i*size+6);}
+    }
+
+    // Seeded pseudo-random data cells
+    let seed = 0x4a1b;
+    function rand() { seed ^= seed<<13; seed ^= seed>>7; seed ^= seed<<17; return Math.abs(seed)%2; }
+
+    for(let r=0;r<size;r++) {
+      for(let c=0;c<size;c++) {
+        const idx = r*size+c;
+        const cell = document.createElement('div');
+        cell.className = 'qr-cell';
+        if(inner.has(idx)) cell.classList.add('b');
+        else if(white.has(idx)) { /* stay white */ }
+        else if(fixed.has(idx)) cell.classList.add('b');
+        else if(rand()) cell.classList.add('b');
+        grid.appendChild(cell);
+      }
+    }
+  }
+  buildQR();
+</script>
+</body>
+</html>
