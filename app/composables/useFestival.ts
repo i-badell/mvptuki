@@ -1,6 +1,14 @@
 import type { Festival, VendorWithFeaturedItems } from "~~/shared/types";
 
-export function useFestival() {
+export interface UseFestival {
+  festival: Ref<Festival | null>;
+  vendors: Ref<VendorWithFeaturedItems[]>;
+  pending: Ref<boolean>;
+  error: Ref<string | null>;
+  refresh: () => Promise<void>;
+}
+
+export function useFestival(): UseFestival {
   const supabase = useSupabaseClient();
 
   const festival = ref<Festival | null>(null);
@@ -44,6 +52,8 @@ export function useFestival() {
 
       if (vendErr) throw vendErr;
 
+      console.log("TEST: featured items", { ...vendorData });
+
       // Also get vendors with no featured items (they still appear, just empty)
       const { data: allVendors, error: allErr } = await supabase
         .from("vendors")
@@ -62,7 +72,6 @@ export function useFestival() {
           .slice(0, 5),
       }));
     } catch (err: unknown) {
-      console.error("TEST: ", err);
       error.value =
         err instanceof Error ? err.message : "Failed to load festival data";
     } finally {

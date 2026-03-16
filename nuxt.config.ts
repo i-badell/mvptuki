@@ -20,7 +20,7 @@ export default defineNuxtConfig({
   vite: {
     plugins: [tailwindcss()],
     server: {
-      allowedHosts: ["gasoline-otherwise-legends-condos.trycloudflare.com"],
+      allowedHosts: ["plates-builds-fun-jam.trycloudflare.com"],
     },
   },
 
@@ -44,6 +44,9 @@ export default defineNuxtConfig({
     // Public (exposed to client)
     public: {
       appUrl: process.env.NUXT_PUBLIC_APP_URL ?? "http://localhost:3000",
+    },
+    featureFlags: {
+      overrideAuth: true,
     },
   },
 

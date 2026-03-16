@@ -1,29 +1,40 @@
 <script setup lang="ts">
-type Variant = 'primary' | 'secondary' | 'danger' | 'ghost'
+type Variant = "primary" | "secondary" | "danger" | "ghost";
+type Size = "big" | "medium" | "small";
 
 const props = withDefaults(
   defineProps<{
-    variant?: Variant
-    loading?: boolean
-    disabled?: boolean
-    type?: 'button' | 'submit' | 'reset'
-    fullWidth?: boolean
+    variant?: Variant;
+    loading?: boolean;
+    disabled?: boolean;
+    type?: "button" | "submit" | "reset";
+    fullWidth?: boolean;
+    size?: Size;
   }>(),
   {
-    variant: 'primary',
+    variant: "primary",
     loading: false,
     disabled: false,
-    type: 'button',
+    type: "button",
     fullWidth: false,
-  }
-)
+    size: "big",
+  },
+);
 
 const variantClasses: Record<Variant, string> = {
-  primary: 'bg-brand-primary text-white hover:bg-orange-600 active:bg-orange-700',
-  secondary: 'bg-surface border border-gray-300 text-text-primary hover:bg-surface-muted',
-  danger: 'bg-error text-white hover:bg-red-700',
-  ghost: 'text-brand-primary hover:bg-orange-50',
-}
+  primary:
+    "bg-red text-white border-red-dark shadow-md-red active:box-shadow:shadow-xs-red",
+  secondary: "bg-white text-black border-black shadow-md active:shadow-xs",
+  danger: "bg-red text-white border-black shadow-md active:shadow-xs",
+  ghost:
+    "bg-transparent text-red border-dashed border-red shadow-none active:bg-red-light",
+};
+
+const sizeClasses: Record<Size, string> = {
+  big: "px-8 py-4 border-[1.5px]",
+  medium: "px-6 py-3 border-[1.5px]",
+  small: "px-4 py-2 border-[1px]",
+};
 </script>
 
 <template>
@@ -31,8 +42,11 @@ const variantClasses: Record<Variant, string> = {
     :type="type"
     :disabled="disabled || loading"
     :class="[
-      'inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-button font-medium text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed',
+      'inline-flex items-center justify-center gap-2 rounded-md font-bold text-base align-middle leading-none cursor-pointer transition-[transform,box-shadow] duration-100',
+      'active:translate-x-[3px] active:translate-y-[3px]',
+      'disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 disabled:[box-shadow:none] disabled:cursor-not-allowed disabled:pointer-events-none',
       variantClasses[variant],
+      sizeClasses[size],
       fullWidth ? 'w-full' : '',
     ]"
   >
@@ -43,7 +57,14 @@ const variantClasses: Record<Variant, string> = {
       fill="none"
       viewBox="0 0 24 24"
     >
-      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+      <circle
+        class="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        stroke-width="4"
+      />
       <path
         class="opacity-75"
         fill="currentColor"

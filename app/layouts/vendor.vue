@@ -9,41 +9,41 @@ async function logout() {
 </script>
 
 <template>
-  <div class="min-h-screen bg-surface-muted flex flex-col">
+  <div class="min-h-screen bg-op-bg flex flex-col">
     <!-- Vendor top nav -->
-    <header class="sticky top-0 z-40 bg-brand-primary shadow-md">
-      <div class="max-w-2xl mx-auto px-4 h-14 flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <span class="text-white font-bold text-lg">Tuki</span>
-          <span class="text-white/60 text-sm">Vendor</span>
+    <header class="sticky top-0 z-sticky bg-op-bg border-b border-op-border">
+      <div class="max-w-2xl mx-auto px-5 h-[62px] flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="font-display text-white text-3xl tracking-[3px] leading-none">TUKI</span>
+          <span class="text-xs font-bold text-op-text-muted uppercase tracking-[1.5px]">Operador</span>
         </div>
 
-        <nav class="flex items-center gap-2">
+        <nav class="flex items-center gap-1">
           <NuxtLink
             to="/dashboard"
-            class="text-white/80 hover:text-white text-sm font-medium px-3 py-1 rounded transition-colors"
-            active-class="text-white bg-white/20"
+            class="text-op-text-muted hover:text-white text-sm font-medium px-3 py-1 rounded-sm transition-colors"
+            active-class="text-white bg-op-border"
           >
-            Orders
+            Pedidos
           </NuxtLink>
           <NuxtLink
             to="/dashboard/scan"
-            class="text-white/80 hover:text-white text-sm font-medium px-3 py-1 rounded transition-colors"
-            active-class="text-white bg-white/20"
+            class="text-op-text-muted hover:text-white text-sm font-medium px-3 py-1 rounded-sm transition-colors"
+            active-class="text-white bg-op-border"
           >
-            Scan QR
+            Escanear QR
           </NuxtLink>
           <button
-            class="text-white/60 hover:text-white text-sm px-3 py-1 rounded transition-colors"
+            class="text-op-text-muted hover:text-white text-sm px-3 py-1 rounded-sm transition-colors"
             @click="logout"
           >
-            Log out
+            Salir
           </button>
         </nav>
       </div>
     </header>
 
-    <main class="flex-1 max-w-2xl mx-auto w-full px-4 py-6">
+    <main class="flex-1 max-w-2xl mx-auto w-full px-5 py-6">
       <slot />
     </main>
   </div>

@@ -24,25 +24,20 @@ const activeTab = computed(() => {
   <div class="min-h-screen bg-white flex flex-col">
 
     <!-- ── Header ─────────────────────────────────────────────────────── -->
-    <header
-      class="sticky top-0 z-sticky bg-white flex items-center justify-between px-5"
-      style="border-bottom: 2px solid #111111; height: 62px;"
-    >
+    <header class="sticky top-0 z-sticky bg-white flex items-center justify-between px-5 h-[62px] border-b-2 border-black">
       <!-- Logo -->
       <NuxtLink
         to="/festival"
-        class="font-display text-black leading-none"
-        style="font-size: 34px; letter-spacing: 4px;"
+        class="font-display text-black leading-none text-4xl tracking-[4px]"
       >
         TU<span class="text-red">KI</span>
       </NuxtLink>
 
       <!-- Actions -->
-      <div class="flex items-center gap-2.5">
+      <div class="flex items-center gap-2">
         <!-- Profile button -->
         <button
-          class="flex items-center justify-center rounded-full bg-gray-50 transition-transform active:scale-[0.91]"
-          style="width: 38px; height: 38px; border: 1.5px solid #111111; font-size: 16px;"
+          class="flex items-center justify-center rounded-full bg-gray-50 border-[1.5px] border-black w-[38px] h-[38px] text-base transition-transform active:scale-[0.91]"
           aria-label="Mi perfil"
           @click="logout"
         >
@@ -51,18 +46,16 @@ const activeTab = computed(() => {
 
         <!-- Cart button -->
         <button
-          class="relative flex items-center justify-center rounded-full bg-red transition-transform active:scale-[0.91]"
-          style="width: 44px; height: 44px; border: none;"
+          class="relative flex items-center justify-center rounded-full bg-red w-[44px] h-[44px] border-0 transition-transform active:scale-[0.91]"
           aria-label="Carrito"
           @click="navigateTo('/checkout')"
         >
-          <svg style="width:20px;height:20px;fill:white;" viewBox="0 0 24 24">
+          <svg class="w-5 h-5 fill-white" viewBox="0 0 24 24">
             <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"/>
           </svg>
           <span
             v-if="itemCount > 0"
-            class="absolute flex items-center justify-center bg-black text-white font-bold rounded-full"
-            style="top: -5px; right: -5px; width: 19px; height: 19px; font-size: 10px;"
+            class="absolute flex items-center justify-center bg-black text-white font-bold rounded-full -top-[5px] -right-[5px] w-[19px] h-[19px] text-xs"
           >
             {{ itemCount }}
           </span>
