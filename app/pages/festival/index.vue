@@ -115,7 +115,9 @@ onMounted(async () => {
           <h2 class="font-display text-3xl tracking-[2.5px] text-black">
             {{ isSingleVendor ? "Menu" : "Food Trucks" }}
           </h2>
-          <NuxtLink to="/trucks">
+          <NuxtLink
+            :to="isSingleVendor ? `/vendors/${vendors[0]?.id}` : '/vendors'"
+          >
             <AppButton variant="ghost" size="small" class="text-sm font-light">
               {{ isSingleVendor ? "Ver menu →" : "Ver todos →" }}
             </AppButton>
