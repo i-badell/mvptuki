@@ -46,6 +46,8 @@ export interface Vendor {
   location_hint: string | null
   status: VendorStatus
   requires_prep: boolean
+  keywords: string[]
+  category_ids: string[]
   created_at: string
 }
 
@@ -102,6 +104,14 @@ export interface PaymentFailure {
   error_message: string | null
   retry_count: number
   created_at: string
+}
+
+export interface Category {
+  id: string
+  label: string
+  emoji: string
+  keywords: string[]
+  sort_order: number
 }
 
 // ─── Enriched / joined types (used in composables) ───────────────────────────

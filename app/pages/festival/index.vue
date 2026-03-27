@@ -6,29 +6,21 @@ definePageMeta({
   middleware: "auth",
 });
 
-const { festival, vendors, pending, error, refresh } = useFestival();
+const { festival, vendors, categories, pending, error, refresh } = useFestival();
 const { fetchOrders } = useOrder();
 
 const isSingleVendor = computed(() => vendors.value.length === 1);
 
 // ── Category filter ───────────────────────────────────────────────────────────
-const CATEGORIES = ["Todos", "Burgers", "Tacos", "Pizza", "Ramen", "Drinks"];
-const KEYWORDS: Record<string, string[]> = {
-  Burgers: ["burger", "hamburgue", "smash"],
-  Tacos: ["taco", "mexic", "burrито"],
-  Pizza: ["pizza", "fornac", "napol"],
-  Ramen: ["ramen", "noodle", "asian", "asiat"],
-  Drinks: ["drink", "bebid", "bar", "cerveza"],
-};
 const selectedCategory = ref("Todos");
 
 const filteredVendors = computed(() => {
   if (selectedCategory.value === "Todos") return vendors.value;
-  const kws = KEYWORDS[selectedCategory.value] ?? [];
-  return vendors.value.filter((v) => {
-    const haystack = `${v.name} ${v.description ?? ""}`.toLowerCase();
-    return kws.some((kw) => haystack.includes(kw));
-  });
+  const cat = categories.value.find((c) => c.label === selectedCategory.value);
+  const kws = cat?.keywords ?? [];
+  return vendors.value.filter((v) =>
+    kws.some((kw) => v.keywords.includes(kw)),
+  );
 });
 
 // ── Active orders strip ───────────────────────────────────────────────────────
@@ -130,13 +122,21 @@ onMounted(async () => {
           class="-mx-4 h-fit pb-2 flex gap-2 overflow-x-auto scrollbar-none px-4 mb-5"
         >
           <AppButton
-            v-for="cat in CATEGORIES"
             size="small"
-            :key="cat"
-            :variant="selectedCategory === cat ? 'primary' : 'secondary'"
-            @click="selectedCategory = cat"
+            :key="'Todos'"
+            :variant="selectedCategory === 'Todos' ? 'primary' : 'secondary'"
+            @click="selectedCategory = 'Todos'"
           >
-            {{ cat }}
+            Todos
+          </AppButton>
+          <AppButton
+            v-for="cat in categories"
+            size="small"
+            :key="cat.id"
+            :variant="selectedCategory === cat.label ? 'primary' : 'secondary'"
+            @click="selectedCategory = cat.label"
+          >
+            {{ cat.emoji }} {{ cat.label }}
           </AppButton>
         </div>
 

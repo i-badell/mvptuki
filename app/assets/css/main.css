@@ -107,6 +107,12 @@
   display: none;
 }
 
+/* ── Animations ─────────────────────────── */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+
 /* ── Mobile-first base ──────────────────── */
 html {
   -webkit-text-size-adjust: 100%;

@@ -1,8 +1,9 @@
-import type { Festival, VendorWithFeaturedItems } from "~~/shared/types";
+import type { Category, Festival, VendorWithFeaturedItems } from "~~/shared/types";
 
 export interface UseFestival {
   festival: Ref<Festival | null>;
   vendors: Ref<VendorWithFeaturedItems[]>;
+  categories: Ref<Category[]>;
   pending: Ref<boolean>;
   error: Ref<string | null>;
   refresh: () => Promise<void>;
@@ -13,6 +14,7 @@ export function useFestival(): UseFestival {
 
   const festival = ref<Festival | null>(null);
   const vendors = ref<VendorWithFeaturedItems[]>([]);
+  const categories = ref<Category[]>([]);
   const pending = ref(true);
   const error = ref<string | null>(null);
 
@@ -63,6 +65,15 @@ export function useFestival(): UseFestival {
 
       if (allErr) throw allErr;
 
+      // Fetch categories
+      const { data: categoriesData, error: catErr } = await supabase
+        .from("categories")
+        .select("*")
+        .order("sort_order", { ascending: true });
+
+      if (catErr) throw catErr;
+      categories.value = categoriesData ?? [];
+
       // Merge: each vendor gets its featured items (max 5)
       vendors.value = (allVendors ?? []).map((v) => ({
         ...v,
@@ -81,5 +92,5 @@ export function useFestival(): UseFestival {
 
   onMounted(() => fetchFestival());
 
-  return { festival, vendors, pending, error, refresh: fetchFestival };
+  return { festival, vendors, categories, pending, error, refresh: fetchFestival };
 }

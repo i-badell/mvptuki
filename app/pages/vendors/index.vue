@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { VendorWithFeaturedItems } from "~~/shared/types";
+import type { Category, VendorWithFeaturedItems } from "~~/shared/types";
 
 definePageMeta({ layout: "default", middleware: "auth" });
 
-const { festival, vendors, pending } = useFestival();
+const { festival, vendors, categories, pending } = useFestival();
 
 watch(
   [pending, vendors],
@@ -15,36 +15,13 @@ watch(
   { immediate: true },
 );
 
-// ── View tab ─────────────────────────────────────────────────────────────────
 const activeTab = ref<"list" | "map">("list");
-
-// ── Search ───────────────────────────────────────────────────────────────────
 const query = ref("");
+const selectedCategory = ref<Category | null>(null);
 
-// ── Category pills ───────────────────────────────────────────────────────────
-const PILLS = [
-  "🍽️ Todos",
-  "🍔 Burgers",
-  "🌮 Street",
-  "🍕 Pizza",
-  "🍜 Ramen",
-  "🌱 Vegano",
-  "🍺 Bebidas",
-];
-const PILL_KEYS: Record<string, string[]> = {
-  "🍔 Burgers": ["burger", "hamburgue", "smash"],
-  "🌮 Street": ["taco", "mexic", "street"],
-  "🍕 Pizza": ["pizza", "fornac", "napol"],
-  "🍜 Ramen": ["ramen", "noodle", "asian"],
-  "🌱 Vegano": ["vegan", "vegano", "plant", "verde"],
-  "🍺 Bebidas": ["beer", "cervez", "drink", "bebid", "bar"],
-};
-const selectedPill = ref("🍽️ Todos");
-
-// ── Filtered list ────────────────────────────────────────────────────────────
 const filtered = computed(() => {
   let list = vendors.value;
-  // search
+
   if (query.value.trim()) {
     const q = query.value.toLowerCase();
     list = list.filter(
@@ -53,13 +30,10 @@ const filtered = computed(() => {
         (v.description ?? "").toLowerCase().includes(q),
     );
   }
-  // pill
-  if (selectedPill.value !== "🍽️ Todos") {
-    const kws = PILL_KEYS[selectedPill.value] ?? [];
-    list = list.filter((v) => {
-      const hay = `${v.name} ${v.description ?? ""}`.toLowerCase();
-      return kws.some((k) => hay.includes(k));
-    });
+
+  if (selectedCategory.value) {
+    const kws = selectedCategory.value.keywords;
+    list = list.filter((v) => kws.some((kw) => v.keywords.includes(kw)));
   }
   return list;
 });
@@ -90,7 +64,7 @@ function priceRange(vendor: VendorWithFeaturedItems) {
 </script>
 
 <template>
-  <div class="-mx-4 -mt-4">
+  <div id="TESTING">
     <!-- ── Loading ──────────────────────────────────────────────────────────── -->
     <template v-if="pending">
       <div class="px-5 pt-5 pb-3 space-y-1">
@@ -279,11 +253,12 @@ function priceRange(vendor: VendorWithFeaturedItems) {
       <!-- ── Category pills ─────────────────────────────────────────────────── -->
       <div class="flex gap-1.5 overflow-x-auto scrollbar-none px-5 pb-3.5">
         <button
-          v-for="pill in PILLS"
-          :key="pill"
+          v-for="cat in categories"
+          :key="cat.id"
           class="inline-flex items-center gap-1 whitespace-nowrap font-bold transition-all"
           :class="
-            selectedPill === pill
+            selectedCategory?.id === cat.id ||
+            (!selectedCategory && cat.keywords.length === 0)
               ? 'bg-black text-white border-black'
               : 'bg-white text-gray-500 border-gray-200'
           "
@@ -293,11 +268,14 @@ function priceRange(vendor: VendorWithFeaturedItems) {
             border: '1.5px solid',
             fontSize: '11px',
             boxShadow:
-              selectedPill === pill ? '2px 2px 0 #aa1f1f' : '2px 2px 0 #e4e4dc',
+              selectedCategory?.id === cat.id ||
+              (!selectedCategory && cat.keywords.length === 0)
+                ? '2px 2px 0 #aa1f1f'
+                : '2px 2px 0 #e4e4dc',
           }"
-          @click="selectedPill = pill"
+          @click="selectedCategory = cat.keywords.length === 0 ? null : cat"
         >
-          {{ pill }}
+          {{ cat.emoji }} {{ cat.label }}
         </button>
       </div>
 
@@ -310,7 +288,12 @@ function priceRange(vendor: VendorWithFeaturedItems) {
           class="text-center py-12 text-gray-400"
           style="font-size: 13px"
         >
-          Sin resultados para "{{ query || selectedPill }}"
+          Sin resultados para "{{
+            query ||
+            (selectedCategory
+              ? `${selectedCategory.emoji} ${selectedCategory.label}`
+              : "")
+          }}"
         </div>
 
         <NuxtLink

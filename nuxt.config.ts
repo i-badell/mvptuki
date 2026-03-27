@@ -20,7 +20,9 @@ export default defineNuxtConfig({
   vite: {
     plugins: [tailwindcss()],
     server: {
-      allowedHosts: ["plates-builds-fun-jam.trycloudflare.com"],
+      allowedHosts: [
+        "6b3d-2800-a4-1cb7-c300-c9e6-2f51-d343-7640.ngrok-free.app",
+      ],
     },
   },
 

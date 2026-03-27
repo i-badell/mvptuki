@@ -132,7 +132,7 @@ function handleAddItem(item: VendorWithFeaturedItems["menu_items"][number]) {
 
       <!-- View full menu CTA -->
       <NuxtLink
-        :to="vendor.status === 'paused' ? '#' : `/vendor/${vendor.id}`"
+        :to="vendor.status === 'paused' ? '#' : `/vendors/${vendor.id}`"
         class="block w-full text-center font-bold uppercase tracking-[0.8px] transition-colors hover:bg-black hover:text-white mt-[13px] py-[10px] rounded-[10px] bg-transparent text-black text-[12px] border-[1.5px] border-[#111111]"
         :class="
           vendor.status === 'paused' ? 'pointer-events-none opacity-50' : ''

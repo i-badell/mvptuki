@@ -25,7 +25,6 @@ const activeTab = computed(() => {
     <header
       class="sticky top-0 z-sticky bg-white flex items-center justify-between px-5 py-4 border-b-2 border-black"
     >
-      <!-- Logo -->
       <NuxtLink
         to="/festival"
         class="font-display text-black leading-none text-4xl tracking-[4px]"
@@ -33,18 +32,7 @@ const activeTab = computed(() => {
         TU<span class="text-red">KI</span>
       </NuxtLink>
 
-      <!-- Actions -->
       <div class="flex items-center gap-2">
-        <!-- Profile button -->
-        <NuxtLink
-          class="flex items-center justify-center rounded-full bg-gray-50 border-[1.5px] border-black w-[38px] h-[38px] text-base transition-transform active:scale-[0.91]"
-          aria-label="Mi perfil"
-          to="/profile"
-        >
-          👤
-        </NuxtLink>
-
-        <!-- Cart button -->
         <button
           class="relative flex items-center justify-center rounded-full bg-red w-[40px] h-[40px] border-0 transition-transform active:scale-[0.91]"
           aria-label="Carrito"
